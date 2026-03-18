@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36915.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseRental.WASB", "HouseRental.WASB\HouseRental.WASB.csproj", "{1FFF63A0-93F8-4FF7-B697-6D405D87BFE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseRental.Shared", "HouseRental.Shared\HouseRental.Shared.csproj", "{94FD708C-EE4A-49C2-B6FA-6491C22F5474}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FFF63A0-93F8-4FF7-B697-6D405D87BFE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FFF63A0-93F8-4FF7-B697-6D405D87BFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FFF63A0-93F8-4FF7-B697-6D405D87BFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FFF63A0-93F8-4FF7-B697-6D405D87BFE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDD48EA7-A493-4143-AAA2-B6D1F4BA69AC}
+	EndGlobalSection
+EndGlobal

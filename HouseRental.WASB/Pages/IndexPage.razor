@@ -1,0 +1,71 @@
+﻿@page "/"
+
+<PageTitle>Rent Suranga Villa</PageTitle>
+
+@* Hero banner *@
+<div class="container-fluid p-0 position-relative">
+
+    <img src="images/hero-banner.jpg" class="img-fluid w-100" style="max-height:450px; object-fit:cover;" />
+
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
+
+    <div class="position-absolute top-50 start-0 text-start translate-middle-y ms-5 text-white">
+        <h1 class="display-4 fw-bold">
+            Villa Name
+        </h1>
+        <p class="lead mt-4">
+            Villa Description            
+        </p>
+        <button class="viewdetails-btn mt-4">VIEW MORE DETAILS</button>
+    </div>
+
+</div>
+
+@* House features *@
+<div class="container mt-3">
+    <div class="row text-start">
+
+        @for (int i = 0; i < 3; i++)
+        {
+            <div class="col-md-4 mb-2">
+                <div class="card p-2" style="border: none; border-radius: 10px;">
+                    <img src="images/home-img-1.jpg" class="card-img-top" style="max-height: 250px; object-fit: cover; border: none; border-radius: 10px;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">
+                            Title
+                        </h5>
+                        <p class="card-text mt-2">
+                            Description
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="container mt-5 text-center">
+    <h1 class="display-5 fw-bold mb-5">
+        Check out our gallery
+    </h1>
+
+    @* House images *@
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="row">
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] public IOptions<AppSettings>? AppSettings { get; set; }
+}

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseRental.WASB", "HouseRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseRental.Shared", "HouseRental.Shared\HouseRental.Shared.csproj", "{94FD708C-EE4A-49C2-B6FA-6491C22F5474}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseRental.API", "HouseRental.API\HouseRental.API.csproj", "{B5492188-37E1-4E44-A607-953C9EAF9C64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94FD708C-EE4A-49C2-B6FA-6491C22F5474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5492188-37E1-4E44-A607-953C9EAF9C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5492188-37E1-4E44-A607-953C9EAF9C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5492188-37E1-4E44-A607-953C9EAF9C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5492188-37E1-4E44-A607-953C9EAF9C64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

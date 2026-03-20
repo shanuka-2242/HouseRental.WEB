@@ -16,7 +16,7 @@
 		<p class="lead mt-4">
 			Villa Description
 		</p>
-		<button class="viewdetails-btn mt-4">View More Details</button>
+		<button onclick="@OnClick" class="viewdetails-btn mt-4">View More Details</button>
 	</div>
 
 </div>
@@ -101,4 +101,9 @@
 
 @code {
 	[Inject] public IOptions<AppSettings>? AppSettings { get; set; }
+
+	private void OnClick()
+	{
+		Console.WriteLine("OnClick Method Executed.");
+	}
 }

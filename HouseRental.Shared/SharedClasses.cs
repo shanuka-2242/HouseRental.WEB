@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace HouseRental.Shared
 {
@@ -11,8 +12,15 @@ namespace HouseRental.Shared
     {
         [Key]
         public int EntryId { get; set; }
-        public string FeatureCardTitle { get; set; } = string.Empty;
-        public string FeatureCardDescription { get; set; } = string.Empty;
-        public string FeatureCardImage { get; set; } = string.Empty;
+        public string CardTitle { get; set; } = string.Empty;
+        public string CardDescription { get; set; } = string.Empty;
+        public byte[] CardImage { get; set; } = [];
+    }
+
+    public class FeatureCardInformationUploadDTO
+    {
+        public string CardTitle { get; set; } = string.Empty;
+        public string CardDescription { get; set; } = string.Empty;
+        public required IFormFile CardImage { get; set; }
     }
 }

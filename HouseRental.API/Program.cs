@@ -1,4 +1,7 @@
 
+using HouseRental.API.Database;
+using Microsoft.EntityFrameworkCore;
+
 namespace HouseRental.API
 {
     public class Program
@@ -13,6 +16,9 @@ namespace HouseRental.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<DataContext>(options =>
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 

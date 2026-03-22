@@ -416,3 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/HouseRental.API/Database/*.db-shm
+/HouseRental.API/Database/*.db-wal

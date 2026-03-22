@@ -17,7 +17,7 @@ namespace HouseRental.Shared
         public byte[] CardImage { get; set; } = [];
     }
 
-    public class FeatureCardInformationUploadDTO
+    public class FeatureCardDTO
     {
         public string CardTitle { get; set; } = string.Empty;
         public string CardDescription { get; set; } = string.Empty;

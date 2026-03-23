@@ -11,7 +11,7 @@ namespace HouseRental.Shared
     public class FeatureCard
     {
         [Key]
-        public int EntryId { get; set; }
+        public int EntryID { get; set; }
         public string CardTitle { get; set; } = string.Empty;
         public string CardDescription { get; set; } = string.Empty;
         public byte[] CardImage { get; set; } = [];
@@ -19,6 +19,7 @@ namespace HouseRental.Shared
 
     public class FeatureCardDTO
     {
+        public int EntryID { get; set; }
         public string CardTitle { get; set; } = string.Empty;
         public string CardDescription { get; set; } = string.Empty;
         public required IFormFile CardImage { get; set; }

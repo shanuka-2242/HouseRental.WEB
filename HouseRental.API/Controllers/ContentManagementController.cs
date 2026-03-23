@@ -45,7 +45,7 @@ namespace HouseRental.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
             }
         }
 
@@ -64,26 +64,40 @@ namespace HouseRental.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
             }
         }
 
         //PUT: api/v1/ContentManagement/editFeatureCardInformation
         [HttpPut("editFeatureCardInformation")]
-        public async Task<ActionResult> EditFeatureCardInformation(FeatureCard featureCard)
+        public async Task<ActionResult> EditFeatureCardInformation([FromForm] FeatureCardDTO featureCardDTO)
         {
             try
             {
+                if (featureCardDTO.CardImage == null || featureCardDTO.CardImage.Length == 0)
+                {
+                    return BadRequest("CardImage cannot be empty.");
+                }
+
+                using var memoryStream = new MemoryStream();
+                await featureCardDTO.CardImage.CopyToAsync(memoryStream);
+
+                FeatureCard featureCard = new FeatureCard();
+                featureCard.EntryID = featureCardDTO.EntryID;
+                featureCard.CardTitle = featureCardDTO.CardTitle;
+                featureCard.CardDescription = featureCardDTO.CardDescription;
+                featureCard.CardImage = memoryStream.ToArray();
+
                 var result = await _contentManagementService.EditFeatureCardInformation(featureCard);
                 if (result)
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Editing information from the database failed due to database error.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Editing information into the database failed.");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
             }
         }
 
@@ -96,13 +110,13 @@ namespace HouseRental.API.Controllers
                 var featureCards = await _contentManagementService.GetAllFeatureCardInformation();
                 if (featureCards == null)
                 {
-                    return NotFound("Couldn't find any items related to this requested type from the database.");
+                    return NotFound("Could not find any items related to this requested type from the database.");
                 }
                 return Ok(featureCards);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
             }
         }
 

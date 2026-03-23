@@ -9,7 +9,7 @@ namespace HouseRental.API.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FeatureCard>().HasKey(e => e.EntryId);
+            modelBuilder.Entity<FeatureCard>().HasKey(e => e.EntryID);
         }
     }
 }

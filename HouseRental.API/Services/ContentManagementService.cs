@@ -73,12 +73,12 @@ namespace HouseRental.API.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<FeatureCard>?> GetAllFeatureCardInformation()
         {
             try
             {
-                var featureCards =  await _dataContext.FeatureCards.ToListAsync();
+                var featureCards = await _dataContext.FeatureCards.ToListAsync();
                 if (featureCards != null && featureCards.Count > 0)
                 {
                     return featureCards;

@@ -1,6 +1,5 @@
 ﻿using HouseRental.Shared;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace HouseRental.WASB.Services

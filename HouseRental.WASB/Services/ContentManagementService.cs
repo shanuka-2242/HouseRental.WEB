@@ -44,9 +44,34 @@ namespace HouseRental.WASB.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<FeatureCard>?> GetAllFeatureCardInformation()
+        public async Task<List<FeatureCard>?> GetAllFeatureCardInformation()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.GetAsync("getAllFeatureCardInformation");
+                if (response.IsSuccessStatusCode)
+                {
+                    var featureCards = await response.Content.ReadFromJsonAsync<List<FeatureCard>>();
+                    if (featureCards != null && featureCards.Count > 0)
+                    {
+                        return featureCards;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Response code result received from ContentManagementService.GetAllFeatureCardInformation(): {response.StatusCode.ToString()}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllFeatureCardInformation():{ex.ToString()}");
+                return null;
+            }
         }
     }
 }

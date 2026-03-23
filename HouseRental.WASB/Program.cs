@@ -1,4 +1,5 @@
 using HouseRental.Shared;
+using HouseRental.WASB.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -15,6 +16,8 @@ namespace HouseRental.WASB
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+            builder.Services.AddHttpClient<IContentManagementService, ContentManagementService>();
 
             await builder.Build().RunAsync();
         }

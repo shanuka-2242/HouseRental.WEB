@@ -25,7 +25,7 @@ namespace HouseRental.API.Controllers
             {
                 if (featureCardDTO.CardImage == null || featureCardDTO.CardImage.Length == 0)
                 {
-                    return BadRequest("CardImage cannot be empty.");
+                    return BadRequest("Feature card image cannot be null.");
                 }
 
                 using var memoryStream = new MemoryStream();
@@ -35,13 +35,15 @@ namespace HouseRental.API.Controllers
                 featureCard.CardTitle = featureCardDTO.CardTitle;
                 featureCard.CardDescription = featureCardDTO.CardDescription;
                 featureCard.CardImage = memoryStream.ToArray();
+                featureCard.ImageContentType = featureCardDTO.CardImage.ContentType;
+                featureCard.ImageFileName = featureCardDTO.CardImage.FileName;
 
                 var result = await _contentManagementService.AddFeatureCardInformation(featureCard);
                 if (result)
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Inserting information into the database failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Inserting feature card information into the database got failed.");
             }
             catch (Exception ex)
             {
@@ -60,7 +62,7 @@ namespace HouseRental.API.Controllers
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Deleting information from the database failed due to database error or provided entryID wasn't able to found.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Deleting feature card information from the database failed due to database error or provided EntryID was not able to found.");
             }
             catch (Exception ex)
             {
@@ -93,7 +95,7 @@ namespace HouseRental.API.Controllers
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Editing information into the database failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Editing feature card information into the database got failed.");
             }
             catch (Exception ex)
             {
@@ -110,7 +112,7 @@ namespace HouseRental.API.Controllers
                 var featureCards = await _contentManagementService.GetAllFeatureCardInformation();
                 if (featureCards == null)
                 {
-                    return NotFound("Could not find any items related to this requested type from the database.");
+                    return NotFound("Could not found any feature card information from the database.");
                 }
                 return Ok(featureCards);
             }

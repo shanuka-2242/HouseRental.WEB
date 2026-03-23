@@ -5,105 +5,158 @@
 @* Hero banner *@
 <div class="container-fluid p-0 position-relative">
 
-	<img src="images/hero-banner.jpg" class="img-fluid w-100" style="max-height:450px; object-fit:cover;" />
+    <img src="images/hero-banner.jpg" class="img-fluid w-100" style="max-height:450px; object-fit:cover;" />
 
-	<div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
 
-	<div class="position-absolute top-50 start-0 text-start translate-middle-y ms-5 text-white">
-		<h1 class="display-4 fw-bold">
-			Villa Name
-		</h1>
-		<p class="lead mt-4">
-			Villa Description
-		</p>
-		<button onclick="@OnClick" class="viewdetails-btn mt-4">View More Details</button>
-	</div>
+    <div class="position-absolute top-50 start-0 text-start translate-middle-y ms-5 text-white">
+        <h1 class="display-4 fw-bold">
+            Villa Name
+        </h1>
+        <p class="lead mt-4">
+            Villa Description
+        </p>
+        <button onclick="@OnClick" class="viewdetails-btn mt-4">View More Details</button>
+    </div>
 
 </div>
 
 @* House features *@
 <div class="container mt-5">
-	<h1 class="display-5 fw-bold mb-3 text-center">
-		Features
-	</h1>
-	<div class="row text-start">
+    <h1 class="display-5 fw-bold mb-3 text-center">
+        Features
+    </h1>
+    <div class="row text-start">
 
-		@for (int i = 0; i < 3; i++)
-		{
-			<div class="col-md-4 p-2">
-				<div class="card p-2" style="border: none; border-radius: 10px;">
-					<img src="images/home-img-1.jpg" class="card-img-top" style="max-height: 250px; object-fit: cover; border: none; border-radius: 10px;">
-					<div class="card-body">
-						<h5 class="card-title fw-bold">
-							Title
-						</h5>
-						<p class="card-text">
-							Description
-						</p>
-					</div>
-				</div>
-			</div>
-		}
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                Fetching information, please wait
+                <div class="spinner-border" role="status"></div>
+            </div>
+        }
+        else
+        {
+            @if (FeatureCards.Count > 0)
+            {
+                foreach (var featureCard in FeatureCards)
+                {
+                    string strImageURL = $"data:{featureCard.ImageContentType};base64,{Convert.ToBase64String(featureCard.CardImage)}";
 
-	</div>
+                    <div class="col-md-4 p-2 d-flex">
+                        <div class="card shadow-sm h-100 w-100" style="border: none; border-radius: 8px; transition: transform 0.2s;">
+
+                            <img src="@strImageURL"
+                                 class="card-img-top"
+                                 alt="@featureCard.CardTitle"
+                                 style="height: 300px; object-fit: cover; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold text-dark">
+                                    @featureCard.CardTitle
+                                </h5>
+                                <p class="card-text text-muted">
+                                    @featureCard.CardDescription
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+
+    </div>
 </div>
 
 <div class="container mt-5 text-center">
-	<h1 class="display-5 fw-bold mb-3">
-		Gallery
-	</h1>
+    <h1 class="display-5 fw-bold mb-3">
+        Gallery
+    </h1>
 
-	@* House images *@
-	@for (int i = 0; i < 3; i++)
-	{
-		<div class="row">
-			<div class="col-md-4 p-2">
-				<img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
-			</div>
-			<div class="col-md-4 p-2">
-				<img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
-			</div>
-			<div class="col-md-4 p-2">
-				<img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
-			</div>
-		</div>
-	}
+    @* House images *@
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="row">
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+            <div class="col-md-4 p-2">
+                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+            </div>
+        </div>
+    }
 
 </div>
 
+@* Top Destinations *@
 <div class="container mt-5 text-center">
-	<h1 class="display-5 fw-bold mb-3">
-		Top Destinations 
-	</h1>
+    <h1 class="display-5 fw-bold mb-3">
+        Top Destinations
+    </h1>
 
-	<div class="row text-start">
+    <div class="row text-start">
 
-		@for (int i = 0; i < 6; i++)
-		{
-			<div class="col-md-4 p-2">
-				<div class="card p-2" style="border: none; border-radius: 10px;">
-					<img src="images/home-img-1.jpg" class="card-img-top" style="max-height: 250px; object-fit: cover; border: none; border-radius: 10px;">
-					<div class="card-body">
-						<h5 class="card-title fw-bold">
-							Destination
-						</h5>
-						<p class="card-text">
-							Description
-						</p>
-						<p class="card-text"><small class="text-muted">Distance</small></p>
-					</div>
-				</div>
-			</div>
-		}
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="col-md-4 p-2 d-flex">
+                <div class="card shadow-sm h-100 w-100" style="border: none; border-radius: 8px; transition: transform 0.2s;">
 
-	</div>
+                    <img src="images/home-img-1.jpg"
+                         class="card-img-top"
+                         alt="destinationCard.CardTitle"
+                         style="height: 300px; object-fit: cover; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-dark">
+                            Destination
+                        </h5>
+                        <p class="card-text text-muted">
+                            Description
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Distance
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
 </div>
 
 @code {
-	[Inject] public IOptions<AppSettings>? AppSettings { get; set; }
+    [Inject] public IOptions<AppSettings>? AppSettings { get; set; }
+    [Inject] private IContentManagementService? contentManagementService { get; set; }
+    List<FeatureCard> FeatureCards = new List<FeatureCard>();
+    private bool IsLoading = true;
 
-	private void OnClick()
-	{
-		Console.WriteLine("OnClick Method Executed.");
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (contentManagementService != null)
+            {
+                var featureCards = await contentManagementService.GetAllFeatureCardInformation();
+                if (featureCards != null && featureCards.Count > 0)
+                {
+                    FeatureCards = featureCards;
+                    IsLoading = false;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occurred: IndexPage.OnInitializedAsync(): {ex.ToString()}");
+        }
+    }
+
+    private async void OnClick()
+    {
+        Console.WriteLine("OnClick Method Executed.");
+    }
 }

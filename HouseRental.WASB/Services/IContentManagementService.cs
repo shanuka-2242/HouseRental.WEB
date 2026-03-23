@@ -9,7 +9,7 @@ namespace HouseRental.WASB.Services
         Task<bool> AddFeatureCardInformation(FeatureCard featureCard);
         Task<bool> EditFeatureCardInformation(FeatureCard featureCard);
         Task<bool> DeleteFeatureCardInformation(int entryID);
-        Task<IEnumerable<FeatureCard>?> GetAllFeatureCardInformation();
+        Task<List<FeatureCard>?> GetAllFeatureCardInformation();
 
         #endregion
     }

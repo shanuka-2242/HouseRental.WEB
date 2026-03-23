@@ -2,6 +2,7 @@
 using HouseRental.API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,47 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HouseRental.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260323180814_destinationCardEntityAdded2")]
+    partial class destinationCardEntityAdded2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
-
-            modelBuilder.Entity("HouseRental.Shared.DestinationCard", b =>
-                {
-                    b.Property<int>("EntryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CardDescription")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("CardImage")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("CardTitle")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Distance")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImageContentType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImageFileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("EntryID");
-
-                    b.ToTable("DestinationCards");
-                });
 
             modelBuilder.Entity("HouseRental.Shared.FeatureCard", b =>
                 {

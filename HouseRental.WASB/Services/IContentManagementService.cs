@@ -12,5 +12,14 @@ namespace HouseRental.WASB.Services
         Task<List<FeatureCard>?> GetAllFeatureCardInformation();
 
         #endregion
+
+        #region Manage Destination Card Information Functions
+
+        Task<bool> AddDestinationCardInformation(DestinationCard destinationCard);
+        Task<bool> EditDestinationCardInformation(DestinationCard destinationCard);
+        Task<bool> DeleteDestinationCardInformation(int entryID);
+        Task<List<DestinationCard>?> GetAllDestinationCardInformation();
+
+        #endregion
     }
 }

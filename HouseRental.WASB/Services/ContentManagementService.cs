@@ -14,6 +14,8 @@ namespace HouseRental.WASB.Services
             _httpClient = httpClient;
         }
 
+        #region Manage Feature Card Information Services
+
         public async Task<bool> AddFeatureCardInformation(FeatureCard featureCard)
         {
             try
@@ -73,5 +75,53 @@ namespace HouseRental.WASB.Services
                 return null;
             }
         }
+
+        public async Task<bool> AddDestinationCardInformation(DestinationCard destinationCard)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> EditDestinationCardInformation(DestinationCard destinationCard)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> DeleteDestinationCardInformation(int entryID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<DestinationCard>?> GetAllDestinationCardInformation()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("getAllDestinationCardInformation");
+                if (response.IsSuccessStatusCode)
+                {
+                    var destinationCards = await response.Content.ReadFromJsonAsync<List<DestinationCard>>();
+                    if (destinationCards != null && destinationCards.Count > 0)
+                    {
+                        return destinationCards;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Response code result received from ContentManagementService.GetAllDestinationCardInformation(): {response.StatusCode.ToString()}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllDestinationCardInformation():{ex.ToString()}");
+                return null;
+            }
+        }
+
+        #endregion
+
     }
 }

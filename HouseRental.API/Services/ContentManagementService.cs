@@ -93,5 +93,84 @@ namespace HouseRental.API.Services
 
         #endregion
 
+        #region Manage Destination Card Information Functions
+
+        public async Task<IEnumerable<DestinationCard>?> GetAllDestinationCardInformation()
+        {
+            try
+            {
+                var destinationCards = await _dataContext.DestinationCards.ToListAsync();
+                if (destinationCards != null && destinationCards.Count > 0)
+                {
+                    return destinationCards;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> EditDestinationCardInformation(DestinationCard destinationCard)
+        {
+            try
+            {
+                _dataContext.DestinationCards.Update(destinationCard);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteDestinationCardInformation(int entryID)
+        {
+            try
+            {
+                var destinationCard = await _dataContext.DestinationCards.FindAsync(entryID);
+                if (destinationCard != null)
+                {
+                    _dataContext.DestinationCards.Remove(destinationCard);
+                    var result = await _dataContext.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> AddDestinationCardInformation(DestinationCard destinationCard)
+        {
+            try
+            {
+                await _dataContext.DestinationCards.AddAsync(destinationCard);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
     }
 }

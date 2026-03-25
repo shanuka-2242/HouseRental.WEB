@@ -12,5 +12,14 @@ namespace HouseRental.API.Services
         Task<IEnumerable<FeatureCard>?> GetAllFeatureCardInformation();
 
         #endregion
+
+        #region Manage Destination Card Information Functions
+
+        Task<bool> AddDestinationCardInformation(DestinationCard destinationCard);
+        Task<bool> EditDestinationCardInformation(DestinationCard destinationCard);
+        Task<bool> DeleteDestinationCardInformation(int entryID);
+        Task<IEnumerable<DestinationCard>?> GetAllDestinationCardInformation();
+
+        #endregion
     }
 }

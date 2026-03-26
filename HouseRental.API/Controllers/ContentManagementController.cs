@@ -169,7 +169,7 @@ namespace HouseRental.API.Controllers
         {
             try
             {
-                var result = await _contentManagementService.DeleteFeatureCardInformation(entryID);
+                var result = await _contentManagementService.DeleteDestinationCardInformation(entryID);
                 if (result)
                 {
                     return Ok();

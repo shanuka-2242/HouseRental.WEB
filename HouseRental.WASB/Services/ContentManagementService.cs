@@ -76,6 +76,10 @@ namespace HouseRental.WASB.Services
             }
         }
 
+        #endregion
+
+        #region Manage Destination Card Information Services
+
         public async Task<bool> AddDestinationCardInformation(DestinationCard destinationCard)
         {
             throw new NotImplementedException();

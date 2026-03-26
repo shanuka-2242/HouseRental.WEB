@@ -37,7 +37,7 @@
         }
         else
         {
-            @if (FeatureCards.Count > 0)
+            @if (IsFeatureCardsExist)
             {
                 foreach (var featureCard in FeatureCards)
                 {
@@ -62,6 +62,16 @@
                         </div>
                     </div>
                 }
+            }
+            else
+            {
+                <div class="container">
+                    <div class="alert alert-danger d-flex align-items-center border-1 border-danger" role="alert">
+                        <div>
+                            <strong>Feature items are currently missing.</strong>
+                        </div>
+                    </div>
+                </div>
             }
         }
 
@@ -108,7 +118,7 @@
         }
         else
         {
-            if (DestinationCards.Count > 0)
+            if (IsDestinationCardsExist)
             {
                 @foreach (var destinationCard in DestinationCards)
                 {
@@ -139,19 +149,35 @@
                     </div>
                 }
             }
+            else
+            {
+                <div class="container">
+                    <div class="alert alert-danger d-flex align-items-center border-1 border-danger" role="alert">
+                        <div>
+                            <strong>Destination items are currently missing.</strong>
+                        </div>
+                    </div>
+                </div>
+            }
         }        
 
     </div>
 </div>
 
 @code {
-    [Inject] public IOptions<AppSettings>? AppSettings { get; set; }
+    [Inject] private IOptions<AppSettings>? AppSettings { get; set; }
     [Inject] private IContentManagementService? contentManagementService { get; set; }
     List<FeatureCard> FeatureCards = new List<FeatureCard>();
     List<DestinationCard> DestinationCards = new List<DestinationCard>();
+
     private bool IsLoadingFeatureCards = true;
+    private bool IsFeatureCardsExist = false;
+
     private bool IsLoadingDestinationCards = true;
+    private bool IsDestinationCardsExist = false;
+
     private bool IsLoadingVillaImagesCards = true;
+    private bool IsVillaImagesExist = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -165,28 +191,35 @@
                 if (featureCards != null && featureCards.Count > 0)
                 {
                     FeatureCards = featureCards;
-                    IsLoadingFeatureCards = false;
+                    IsLoadingFeatureCards = false;                    
+                    IsFeatureCardsExist = true;
                 }
                 else
                 {
-                    //TO DO (Handle featureCards == null)
+                    IsLoadingFeatureCards = false;
+                    IsFeatureCardsExist = false;
                 }
 
                 if (destinationCards != null && destinationCards.Count > 0)
                 {
                     DestinationCards = destinationCards;
                     IsLoadingDestinationCards = false;
+                    IsDestinationCardsExist = true;
                 }
                 else
                 {
-                    //TO DO (Handle destinationCards == null)
+                    IsLoadingDestinationCards = false;
+                    IsDestinationCardsExist = false;
                 }
-
+            }
+            else
+            {
+                CustomFunctions.WriteConsoleLog("ERROR", "IndexPage.OnInitializedAsync(): contentManagementService is null.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception occurred: IndexPage.OnInitializedAsync(): {ex.ToString()}");
+            CustomFunctions.WriteConsoleLog("ERROR", $"Exception occurred: IndexPage.OnInitializedAsync(): {ex.ToString()}");
         }
     }
 

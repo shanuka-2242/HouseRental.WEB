@@ -55,4 +55,11 @@ namespace HouseRental.Shared
     }
 
     #endregion
+
+    public class HouseInformation
+    {
+        public string VillaName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+
+    }
 }

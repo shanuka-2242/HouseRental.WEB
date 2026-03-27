@@ -19,7 +19,7 @@ namespace HouseRental.API.Controllers
 
         //POST: api/v1/ContentManagement/addFeatureCardInformation
         [HttpPost("addFeatureCardInformation")]
-        public async Task<ActionResult> InsertFeatureCardInformation([FromForm] FeatureCardDTO featureCardDTO)
+        public async Task<ActionResult> AddFeatureCardInformation([FromForm] FeatureCardDTO featureCardDTO)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace HouseRental.API.Controllers
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Inserting feature card information into the database got failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Adding feature card information into the database got failed.");
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace HouseRental.API.Controllers
 
         //POST: api/v1/ContentManagement/addDestinationCardInformation
         [HttpPost("addDestinationCardInformation")]
-        public async Task<ActionResult> InsertDestinationCardInformation([FromForm] DestinationCardDTO destinationCardDTO)
+        public async Task<ActionResult> AddDestinationCardInformation([FromForm] DestinationCardDTO destinationCardDTO)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace HouseRental.API.Controllers
                 {
                     return Ok();
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Inserting destination card information into the database got failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Adding destination card information into the database got failed.");
             }
             catch (Exception ex)
             {
@@ -230,6 +230,184 @@ namespace HouseRental.API.Controllers
                     return NotFound("Could not found any destination card information from the database.");
                 }
                 return Ok(destinationCards);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        #endregion
+
+        #region Manage House Images API Endpoints
+
+        //POST: api/v1/ContentManagement/addHouseImage
+        [HttpPost("addHouseImage")]
+        public async Task<ActionResult> AddHouseImage([FromForm] HouseImageDTO houseImageDTO)
+        {
+            try
+            {
+                if (houseImageDTO.Image == null || houseImageDTO.Image.Length == 0)
+                {
+                    return BadRequest("House image cannot be null.");
+                }
+
+                using var memoryStream = new MemoryStream();
+                await houseImageDTO.Image.CopyToAsync(memoryStream);
+
+                HouseImage houseImage = new HouseImage();
+                houseImage.Image = memoryStream.ToArray();
+                houseImage.ImageContentType = houseImageDTO.Image.ContentType;
+                houseImage.ImageFileName = houseImageDTO.Image.FileName;
+
+                var result = await _contentManagementService.AddHouseImage(houseImage);
+                if (result)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Adding house image into the database got failed.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        //DELETE: api/v1/ContentManagement/deleteHouseImage/entryID
+        [HttpDelete("deleteHouseImage/{entryID}")]
+        public async Task<ActionResult> DeleteHouseImage(int entryID)
+        {
+            try
+            {
+                var result = await _contentManagementService.DeleteHouseImage(entryID);
+                if (result)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Deleting house image from the database failed due to database error or provided EntryID was not able to found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        //PUT: api/v1/ContentManagement/editHouseImage
+        [HttpPut("editHouseImage")]
+        public async Task<ActionResult> EditHouseImage([FromForm] HouseImageDTO houseImageDTO)
+        {
+            try
+            {
+                if (houseImageDTO.Image == null || houseImageDTO.Image.Length == 0)
+                {
+                    return BadRequest("HouseImage cannot be empty.");
+                }
+
+                using var memoryStream = new MemoryStream();
+                await houseImageDTO.Image.CopyToAsync(memoryStream);
+
+                HouseImage houseImage = new HouseImage();
+                houseImage.EntryID = houseImageDTO.EntryID;
+                houseImage.Image = memoryStream.ToArray();
+                houseImage.ImageContentType = houseImageDTO.Image.ContentType;
+                houseImage.ImageFileName = houseImageDTO.Image.FileName;
+
+                var result = await _contentManagementService.EditHouseImage(houseImage);
+                if (result)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Editing house image into the database got failed.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        //GET: api/v1/ContentManagement/getAllHouseImages
+        [HttpGet("getAllHouseImages")]
+        public async Task<ActionResult> GetAllHouseImages()
+        {
+            try
+            {
+                var houseImages = await _contentManagementService.GetAllHouseImages();
+                if (houseImages == null)
+                {
+                    return NotFound("Could not found any house images from the database.");
+                }
+                return Ok(houseImages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        #endregion
+
+        #region Manage House Information API Endpoints
+
+        //PUT: api/v1/ContentManagement/editHouseInformation
+        [HttpPut("editHouseInformation")]
+        public async Task<ActionResult> EditHouseInformation(HouseInformation houseInformation)
+        {
+            try
+            {
+                if (houseInformation == null)
+                {
+                    return BadRequest("HouseInformation cannot be null.");
+                }
+                
+                var result = await _contentManagementService.EditHouseInformation(houseInformation);
+                if (result)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Editing house information into the database got failed.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        //GET: api/v1/ContentManagement/getHouseInformation
+        [HttpGet("getHouseInformation")]
+        public async Task<ActionResult> GetHouseInformation()
+        {
+            try
+            {
+                var houseInformation = await _contentManagementService.GetHouseInformation();
+                if (houseInformation == null)
+                {
+                    return NotFound("Could not found any house information from the database.");
+                }
+                return Ok(houseInformation);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Exception occurred: {ex.ToString()}");
+            }
+        }
+
+        //POST: api/v1/ContentManagement/addHouseInformation
+        [HttpPost("addHouseInformation")]
+        public async Task<ActionResult> AddHouseInformation(HouseInformation houseInformation)
+        {
+            try
+            {
+                if (houseInformation == null)
+                {
+                    return BadRequest("House information cannot be null.");
+                }
+
+                var result = await _contentManagementService.AddHouseInformation(houseInformation);
+                if (result)
+                {
+                    return Ok();
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Adding house information into the database got failed.");
             }
             catch (Exception ex)
             {

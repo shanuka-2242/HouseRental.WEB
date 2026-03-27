@@ -125,7 +125,95 @@ namespace HouseRental.WASB.Services
             }
         }
 
+        public async Task<bool> AddHouseImage(HouseImage houseImage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> EditHouseImage(HouseImage houseImage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> DeleteHouseImage(int entryID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<HouseImage>?> GetAllHouseImages()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("getAllHouseImages");
+                if (response.IsSuccessStatusCode)
+                {
+                    var houseImages = await response.Content.ReadFromJsonAsync<List<HouseImage>>();
+                    if (houseImages != null && houseImages.Count > 0)
+                    {
+                        return houseImages;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Response code result received from ContentManagementService.GetAllHouseImages(): {response.StatusCode.ToString()}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllHouseImages():{ex.ToString()}");
+                return null;
+            }
+        }
+
         #endregion
 
+        #region Manage House Information Services
+
+        public async Task<bool> AddHouseInformation(HouseInformation houseInformation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> EditHouseInformation(HouseInformation houseInformation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<HouseInformation?> GetHouseInformation()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("getHouseInformation");
+                if (response.IsSuccessStatusCode)
+                {
+                    var houseInformation = await response.Content.ReadFromJsonAsync<HouseInformation>();
+                    if (houseInformation != null)
+                    {
+                        return houseInformation;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Response code result received from ContentManagementService.GetHouseInformation(): {response.StatusCode.ToString()}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred at ContentManagementService.GetHouseInformation():{ex.ToString()}");
+                return null;
+            }
+        }
+
+        #endregion
     }
 }

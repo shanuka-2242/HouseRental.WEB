@@ -2,6 +2,7 @@
 using HouseRental.API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HouseRental.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260327174042_AddedHouseImageEntity")]
+    partial class AddedHouseImageEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -80,29 +83,6 @@ namespace HouseRental.API.Migrations
                     b.HasKey("EntryID");
 
                     b.ToTable("FeatureCards");
-                });
-
-            modelBuilder.Entity("HouseRental.Shared.HouseImage", b =>
-                {
-                    b.Property<int>("EntryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("ImageContentType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImageFileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("EntryID");
-
-                    b.ToTable("HouseImages");
                 });
 
             modelBuilder.Entity("HouseRental.Shared.HouseInformation", b =>

@@ -172,5 +172,142 @@ namespace HouseRental.API.Services
         }
 
         #endregion
+
+        #region Manage House Images Functions
+
+        public async Task<bool> AddHouseImage(HouseImage houseImage)
+        {
+            try
+            {
+                await _dataContext.HouseImages.AddAsync(houseImage);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> EditHouseImage(HouseImage houseImage)
+        {
+            try
+            {
+                _dataContext.HouseImages.Update(houseImage);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteHouseImage(int entryID)
+        {
+            try
+            {
+                var houseImage = await _dataContext.HouseImages.FindAsync(entryID);
+                if (houseImage != null)
+                {
+                    _dataContext.HouseImages.Remove(houseImage);
+                    var result = await _dataContext.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<HouseImage>?> GetAllHouseImages()
+        {
+            try
+            {
+                var houseImages = await _dataContext.HouseImages.ToListAsync();
+                if (houseImages != null && houseImages.Count > 0)
+                {
+                    return houseImages;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Manage House Information Functions
+
+        public async Task<bool> AddHouseInformation(HouseInformation houseInformation)
+        {
+            try
+            {
+                await _dataContext.HouseInformation.AddAsync(houseInformation);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> EditHouseInformation(HouseInformation houseInformation)
+        {
+            try
+            {
+                _dataContext.HouseInformation.Update(houseInformation);
+                var result = await _dataContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<HouseInformation?> GetHouseInformation()
+        {
+            try
+            {
+                var houseInformation = await _dataContext.HouseInformation.FirstOrDefaultAsync();
+                if (houseInformation != null)
+                {
+                    return houseInformation;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
     }
 }

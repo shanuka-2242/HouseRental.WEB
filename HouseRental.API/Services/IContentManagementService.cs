@@ -21,5 +21,22 @@ namespace HouseRental.API.Services
         Task<IEnumerable<DestinationCard>?> GetAllDestinationCardInformation();
 
         #endregion
+
+        #region Manage House Images Functions
+
+        Task<bool> AddHouseImage(HouseImage houseImage);
+        Task<bool> EditHouseImage(HouseImage houseImage);
+        Task<bool> DeleteHouseImage(int entryID);
+        Task<IEnumerable<HouseImage>?> GetAllHouseImages();
+
+        #endregion
+
+        #region Manage House Information Functions
+
+        Task<bool> AddHouseInformation(HouseInformation houseInformation);
+        Task<bool> EditHouseInformation(HouseInformation houseInformation);
+        Task<HouseInformation?> GetHouseInformation();
+
+        #endregion
     }
 }

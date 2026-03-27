@@ -16,7 +16,7 @@
         <p class="lead mt-4">
             Villa Description
         </p>
-        <button onclick="@OnClick" class="viewdetails-btn mt-4">View More Details</button>
+        <button onclick="@ShowMoreDetails" class="viewdetails-btn mt-4">View More Details</button>
     </div>
 
 </div>
@@ -37,7 +37,7 @@
         }
         else
         {
-            @if (IsFeatureCardsExist)
+            if (IsFeatureCardsExist)
             {
                 foreach (var featureCard in FeatureCards)
                 {
@@ -84,21 +84,40 @@
     </h1>
 
     @* House images *@
-    @for (int i = 0; i < 3; i++)
-    {
-        <div class="row">
-            <div class="col-md-4 p-2">
-                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
+    <div class="row">
+        @if (IsLoadingHouseImages)
+        {
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                Fetching information, please wait
+                <div class="spinner-border" role="status"></div>
             </div>
-            <div class="col-md-4 p-2">
-                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
-            </div>
-            <div class="col-md-4 p-2">
-                <img src="images/home-img-1.jpg" class="house-image img-fluid w-100" />
-            </div>
-        </div>
-    }
+        }
+        else
+        {
+            if (IsHouseImagesExist)
+            {
+                foreach (var houseImage in HouseImages)
+                {
+                    string strImageURL = $"data:{houseImage.ImageContentType};base64,{Convert.ToBase64String(houseImage.Image)}";
 
+                    <div class="col-md-4 p-2">
+                        <img src="@strImageURL" class="house-image img-fluid w-100" />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="container">
+                    <div class="alert alert-danger d-flex align-items-center border-1 border-danger" role="alert">
+                        <div>
+                            <strong>House images currently missing.</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>   
+    
 </div>
 
 @* Top Destinations *@
@@ -164,11 +183,65 @@
     </div>
 </div>
 
+@if (IsVisibleMessageBox)
+{
+    <div class="modal-backdrop fade show" style="backdrop-filter: blur(5px);"></div>
+
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 8px; overflow: hidden;">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark fs-4">Villa Details</h5>
+                    <button type="button" class="btn-close shadow-none" @onclick="CloseMessage"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <h2 class="fw-bold text-primary mb-1">@HouseInformation.VillaName</h2>
+                        <div class="text-muted d-flex align-items-center">
+                            <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+                            <span>@HouseInformation.Address</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <div class="mb-4">
+                        <label class="small text-uppercase fw-bold text-muted tracking-wider mb-2 d-block">Description</label>
+                        <p class="text-secondary lh-base" style="font-size: 0.95rem;">
+                            @HouseInformation.Description
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-4 border-0">
+                        <label class="small text-uppercase fw-bold text-muted mb-3 d-block">Hosted By</label>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 45px; height: 45px;">
+                                @(HouseInformation.OwnerName?.Substring(0, 1).ToUpper() ?? "O")
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">@HouseInformation.OwnerName</h6>
+                                <a href="mailto:@HouseInformation.OwnerEmail" class="text-decoration-none small text-primary">
+                                    <i class="bi bi-envelope-fill me-1"></i> @HouseInformation.OwnerEmail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    [Inject] private IOptions<AppSettings>? AppSettings { get; set; }
     [Inject] private IContentManagementService? contentManagementService { get; set; }
     List<FeatureCard> FeatureCards = new List<FeatureCard>();
     List<DestinationCard> DestinationCards = new List<DestinationCard>();
+    List<HouseImage> HouseImages = new List<HouseImage>();
+    HouseInformation HouseInformation = new HouseInformation();
+
+    private bool IsVisibleMessageBox { get; set; } = false;
 
     private bool IsLoadingFeatureCards = true;
     private bool IsFeatureCardsExist = false;
@@ -176,8 +249,8 @@
     private bool IsLoadingDestinationCards = true;
     private bool IsDestinationCardsExist = false;
 
-    private bool IsLoadingVillaImagesCards = true;
-    private bool IsVillaImagesExist = false;
+    private bool IsLoadingHouseImages = true;
+    private bool IsHouseImagesExist = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -187,7 +260,9 @@
             {
                 var featureCards = await contentManagementService.GetAllFeatureCardInformation();
                 var destinationCards = await contentManagementService.GetAllDestinationCardInformation();
-
+                var houseImages = await contentManagementService.GetAllHouseImages();
+                var houseInformation = await contentManagementService.GetHouseInformation();
+                
                 if (featureCards != null && featureCards.Count > 0)
                 {
                     FeatureCards = featureCards;
@@ -211,6 +286,23 @@
                     IsLoadingDestinationCards = false;
                     IsDestinationCardsExist = false;
                 }
+
+                if (houseImages != null && houseImages.Count > 0)
+                {
+                    HouseImages = houseImages;
+                    IsLoadingHouseImages = false;
+                    IsHouseImagesExist = true;
+                }
+                else
+                {
+                    IsLoadingHouseImages = false;
+                    IsHouseImagesExist = false;
+                }
+               
+                if (houseInformation != null)
+                {
+                    HouseInformation = houseInformation;
+                }
             }
             else
             {
@@ -222,9 +314,14 @@
             CustomFunctions.WriteConsoleLog("ERROR", $"Exception occurred: IndexPage.OnInitializedAsync(): {ex.ToString()}");
         }
     }
-
-    private async void OnClick()
+    
+    private void ShowMoreDetails()
     {
-        Console.WriteLine("OnClick Method Executed.");
+        IsVisibleMessageBox = true;
+    }
+
+    private void CloseMessage()
+    {
+        IsVisibleMessageBox = false;
     }
 }

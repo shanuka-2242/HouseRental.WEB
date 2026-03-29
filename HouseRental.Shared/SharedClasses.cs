@@ -8,6 +8,12 @@ namespace HouseRental.Shared
         public string APIBaseURL { get; set; } = string.Empty;
     }
 
+    public class AdminUser
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
     #region FeatureCard Card Class & DTO
 
     public class FeatureCard

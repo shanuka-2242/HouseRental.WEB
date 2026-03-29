@@ -3,36 +3,84 @@
 <PageTitle>Admin Login</PageTitle>
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-sm border-0 p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
+    <div class="card shadow-sm border-0 p-4 rounded-3" style="width: 100%; max-width: 400px;">
         <div class="card-body">
             <h3 class="text-center fw-bold mb-4">Admin Login</h3>
 
-            <form>
+            <EditForm Model="@adminUser">
                 <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label fw-semibold">Email address</label>
-                    <input type="email" class="form-control form-control-lg px-3"
-                           id="exampleInputEmail1" placeholder="name@example.com"
-                           style="border-radius: 10px; font-size: 0.9rem;">
+                    <label for="email" class="form-label fw-semibold">Email address</label>
+                    <input type="email" class="form-control form-control-lg px-3 rounded-3"
+                           id="email" placeholder="Enter your email"
+                           @bind-value="adminUser.Email" @bind-value:event="oninput"
+                           style="font-size: 0.9rem;">
                 </div>
 
                 <div class="mb-3">
-                    <div class="d-flex justify-content-between">
-                        <label for="exampleInputPassword1" class="form-label fw-semibold">Password</label>
-                    </div>
-                    <input type="password" class="form-control form-control-lg px-3"
-                           id="exampleInputPassword1" placeholder="Enter your password"
-                           style="border-radius: 10px; font-size: 0.9rem;">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control form-control-lg px-3 rounded-3"
+                           id="password" placeholder="Enter your password"
+                           @bind-value="adminUser.Password" @bind-value:event="oninput"
+                           style="font-size: 0.9rem;">
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold"
-                        style="border-radius: 10px; background-color: #0d6efd;">
-                        Log In
+                <button type="submit" @onclick="LoginClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
+                    Log In
                 </button>
-            </form>
+
+                @if (ShowErrorMessage)
+                {
+                    <div class="alert alert-danger mt-3 p-2 small border-0">
+                        @ErrorMessage                        
+                    </div>
+                }
+            </EditForm>
         </div>
     </div>
 </div>
 
 @code {
+    AdminUser adminUser = new AdminUser();
+    string ErrorMessage = string.Empty;
+    bool ShowErrorMessage = false;
+    [Inject] private AuthenticationStateProvider? AuthProvider { get; set; }
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
+    // admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
+    // Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
+
+    private void LoginClick()
+    {
+        if (!string.IsNullOrWhiteSpace(adminUser.Email) 
+        && !string.IsNullOrWhiteSpace(adminUser.Password))
+        {
+            var encryptedEmail = CustomFunctions.GenerateUniqueId(adminUser.Email);
+            var encryptedPassword = CustomFunctions.GenerateUniqueId(adminUser.Password);
+
+            if (encryptedEmail == "7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB" 
+            && encryptedPassword == "7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C")
+            {
+                if (AuthProvider != null && NavigationManager != null)
+                {
+                    var customService = (CustomAuthStateProvider)AuthProvider;
+                    customService.NotifyUserLogin(adminUser.Email);
+                    NavigationManager.NavigateTo("/upload-contents");
+                }
+                else
+                {
+                    CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): AuthProvider is null OR NavigationManager is null.");
+                }
+            }
+            else
+            {
+                ErrorMessage = "Entered email or password is incorrect.";
+                ShowErrorMessage = true;
+            }
+        }
+        else
+        {
+            ErrorMessage = "Entry fields cannot be empty.";
+            ShowErrorMessage = true;
+        }
+    }
 }

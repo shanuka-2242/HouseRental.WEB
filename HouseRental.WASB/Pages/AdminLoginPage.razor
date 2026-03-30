@@ -43,13 +43,31 @@
     AdminUser adminUser = new AdminUser();
     string ErrorMessage = string.Empty;
     bool ShowErrorMessage = false;
-    [Inject] private AuthenticationStateProvider? AuthProvider { get; set; }
+    [Inject] private IJSRuntime? JSRuntime { get; set; }
     [Inject] private NavigationManager? NavigationManager { get; set; }
+    [Inject] private AuthenticationStateProvider? AuthenticationStateProvider { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (NavigationManager != null && AuthenticationStateProvider != null)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/upload-contents");
+            }
+        }
+        else
+        {
+            CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.OnInitializedAsync(): NavigationManager == null OR AuthenticationStateProvider == null.");
+        }        
+    }
 
     // admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
     // Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
 
-    private void LoginClick()
+    private async void LoginClick()
     {
         if (!string.IsNullOrWhiteSpace(adminUser.Email) 
         && !string.IsNullOrWhiteSpace(adminUser.Password))
@@ -60,15 +78,15 @@
             if (encryptedEmail == "7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB" 
             && encryptedPassword == "7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C")
             {
-                if (AuthProvider != null && NavigationManager != null)
+                if (JSRuntime != null && NavigationManager != null && AuthenticationStateProvider != null)
                 {
-                    var customService = (CustomAuthStateProvider)AuthProvider;
-                    customService.NotifyUserLogin(adminUser.Email);
+                    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "useremail", encryptedEmail);
+                    await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     NavigationManager.NavigateTo("/upload-contents");
                 }
                 else
                 {
-                    CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): AuthProvider is null OR NavigationManager is null.");
+                    CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): JSRuntime == null OR NavigationManager == null OR AuthenticationStateProvider == null.");
                 }
             }
             else

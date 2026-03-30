@@ -358,7 +358,7 @@ namespace HouseRental.API.Controllers
                 {
                     return BadRequest("HouseInformation cannot be null.");
                 }
-                
+
                 var result = await _contentManagementService.EditHouseInformation(houseInformation);
                 if (result)
                 {

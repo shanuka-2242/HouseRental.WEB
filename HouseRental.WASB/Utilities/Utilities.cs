@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -29,32 +30,29 @@ namespace HouseRental.WASB.Utilities
         }
     }
 
-    public class CustomAuthStateProvider : AuthenticationStateProvider
+    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
-        private ClaimsPrincipal _currentUser;
-
-        public CustomAuthStateProvider()
+        private readonly IJSRuntime _jsRuntime;
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime)
         {
-            _currentUser = _anonymous;
+            _jsRuntime = jsRuntime;
         }
 
-        public override Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            return Task.FromResult(new AuthenticationState(_currentUser));
-        }
+            var authenticationState = new AuthenticationState(new ClaimsPrincipal());
+            var useremail = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "useremail");
+            if (!string.IsNullOrWhiteSpace(useremail))
+            {
+                var identity = new ClaimsIdentity(
+                [
+                    new Claim(ClaimTypes.Name, useremail)
+                ], "apiauth");
 
-        public void NotifyUserLogin(string email)
-        {
-            var identity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, email) }, "apiauth");
-            _currentUser = new ClaimsPrincipal(identity);
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
-        }
-
-        public void NotifyUserLogout()
-        {
-            _currentUser = _anonymous;
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+                authenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
+            }
+            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
+            return authenticationState;
         }
     }
 }

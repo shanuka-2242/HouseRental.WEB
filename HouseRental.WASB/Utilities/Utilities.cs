@@ -40,19 +40,26 @@ namespace HouseRental.WASB.Utilities
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var authenticationState = new AuthenticationState(new ClaimsPrincipal());
-            var useremail = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "useremail");
-            if (!string.IsNullOrWhiteSpace(useremail))
+            try
             {
-                var identity = new ClaimsIdentity(
-                [
-                    new Claim(ClaimTypes.Name, useremail)
-                ], "apiauth");
+                var authenticationState = new AuthenticationState(new ClaimsPrincipal());
+                var useremail = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "useremail");
+                if (!string.IsNullOrWhiteSpace(useremail))
+                {
+                    var identity = new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.Name, useremail)
+                    ], "apiauth");
 
-                authenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
+                    authenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
+                }
+                NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
+                return authenticationState;
             }
-            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
-            return authenticationState;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

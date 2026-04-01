@@ -3,102 +3,115 @@
 <PageTitle>Admin Login</PageTitle>
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-sm border-0 p-4 rounded-3" style="width: 100%; max-width: 400px;">
-        <div class="card-body">
-            <h3 class="text-center fw-bold mb-4">Admin Login</h3>
+	<div class="card shadow-sm border-0 p-4 rounded-3" style="width: 100%; max-width: 400px;">
+		<div class="card-body">
+			<h3 class="text-center fw-bold mb-4">Admin Login</h3>
 
-            <EditForm Model="@adminUser">
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold">Email address</label>
-                    <input type="email" class="form-control form-control-lg px-3 rounded-3"
-                           id="email" placeholder="Enter your email"
-                           @bind-value="adminUser.Email" @bind-value:event="oninput"
-                           style="font-size: 0.9rem;">
-                </div>
+			<EditForm Model="@adminUser">
+				<div class="mb-3">
+					<label for="email" class="form-label fw-bold">Email address</label>
+					<input type="email" class="form-control form-control-lg px-3 rounded-3"
+						   id="email" placeholder="Enter your email"
+						   @bind-value="adminUser.Email" @bind-value:event="oninput"
+						   style="font-size: 0.9rem;">
+				</div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label fw-semibold">Password</label>
-                    <input type="password" class="form-control form-control-lg px-3 rounded-3"
-                           id="password" placeholder="Enter your password"
-                           @bind-value="adminUser.Password" @bind-value:event="oninput"
-                           style="font-size: 0.9rem;">
-                </div>
+				<div class="mb-3">
+					<label for="password" class="form-label fw-bold">Password</label>
+					<input type="password" class="form-control form-control-lg px-3 rounded-3"
+						   id="password" placeholder="Enter your password"
+						   @bind-value="adminUser.Password" @bind-value:event="oninput"
+						   style="font-size: 0.9rem;">
+				</div>
 
-                <button type="submit" @onclick="LoginClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
-                    Log In
-                </button>
+				<button type="submit" @onclick="LoginClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
+					Log In
+				</button>
 
-                @if (ShowErrorMessage)
-                {
-                    <div class="alert alert-danger mt-3 p-2 small border-0">
-                        @ErrorMessage                        
-                    </div>
-                }
-            </EditForm>
-        </div>
-    </div>
+				@if (ShowErrorMessage)
+				{
+					<div class="alert alert-danger mt-3 p-2 small border-0">
+						@ErrorMessage
+					</div>
+				}
+			</EditForm>
+		</div>
+	</div>
 </div>
 
 @code {
-    AdminUser adminUser = new AdminUser();
-    string ErrorMessage = string.Empty;
-    bool ShowErrorMessage = false;
-    [Inject] private IJSRuntime? JSRuntime { get; set; }
-    [Inject] private NavigationManager? NavigationManager { get; set; }
-    [Inject] private AuthenticationStateProvider? AuthenticationStateProvider { get; set; }
+	AdminUser adminUser = new AdminUser();
+	string ErrorMessage = string.Empty;
+	bool ShowErrorMessage = false;
+	[Inject] private IJSRuntime? JSRuntime { get; set; }
+	[Inject] private NavigationManager? NavigationManager { get; set; }
+	[Inject] private AuthenticationStateProvider? AuthenticationStateProvider { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (NavigationManager != null && AuthenticationStateProvider != null)
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            if (user.Identity is not null && user.Identity.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("/upload-contents");
-            }
-        }
-        else
-        {
-            CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.OnInitializedAsync(): NavigationManager == null OR AuthenticationStateProvider == null.");
-        }        
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			if (NavigationManager != null && AuthenticationStateProvider != null)
+			{
+				var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+				var user = authState.User;
+				if (user.Identity is not null && user.Identity.IsAuthenticated)
+				{
+					NavigationManager.NavigateTo("/upload-contents");
+				}
+			}
+			else
+			{
+				CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.OnInitializedAsync(): NavigationManager == null OR AuthenticationStateProvider == null.");
+			}
+		}
+		catch (Exception ex)
+		{
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception occurred: AdminLoginPage.OnInitializedAsync(): {ex.ToString()}");
+		}
+	}
 
-    // admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
-    // Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
+	// admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
+	// Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
 
-    private async void LoginClick()
-    {
-        if (!string.IsNullOrWhiteSpace(adminUser.Email) 
-        && !string.IsNullOrWhiteSpace(adminUser.Password))
-        {
-            var encryptedEmail = CustomFunctions.GenerateUniqueId(adminUser.Email);
-            var encryptedPassword = CustomFunctions.GenerateUniqueId(adminUser.Password);
+	private async void LoginClick()
+	{
+		try
+		{
+			if (!string.IsNullOrWhiteSpace(adminUser.Email) && !string.IsNullOrWhiteSpace(adminUser.Password))
+			{
+				var encryptedEmail = CustomFunctions.GenerateUniqueId(adminUser.Email);
+				var encryptedPassword = CustomFunctions.GenerateUniqueId(adminUser.Password);
 
-            if (encryptedEmail == "7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB" 
-            && encryptedPassword == "7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C")
-            {
-                if (JSRuntime != null && NavigationManager != null && AuthenticationStateProvider != null)
-                {
-                    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "useremail", encryptedEmail);
-                    await AuthenticationStateProvider.GetAuthenticationStateAsync();
-                    NavigationManager.NavigateTo("/upload-contents");
-                }
-                else
-                {
-                    CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): JSRuntime == null OR NavigationManager == null OR AuthenticationStateProvider == null.");
-                }
-            }
-            else
-            {
-                ErrorMessage = "Entered email or password is incorrect.";
-                ShowErrorMessage = true;
-            }
-        }
-        else
-        {
-            ErrorMessage = "Entry fields cannot be empty.";
-            ShowErrorMessage = true;
-        }
-    }
+				if (encryptedEmail == "7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB"
+				&& encryptedPassword == "7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C")
+				{
+					if (JSRuntime != null && NavigationManager != null && AuthenticationStateProvider != null)
+					{
+						await JSRuntime.InvokeVoidAsync("localStorage.setItem", "useremail", encryptedEmail);
+						await AuthenticationStateProvider.GetAuthenticationStateAsync();
+						NavigationManager.NavigateTo("/upload-contents");
+					}
+					else
+					{
+						CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): JSRuntime == null OR NavigationManager == null OR AuthenticationStateProvider == null.");
+					}
+				}
+				else
+				{
+					ErrorMessage = "Entered email or password is incorrect.";
+					ShowErrorMessage = true;
+				}
+			}
+			else
+			{
+				ErrorMessage = "Entry fields cannot be empty.";
+				ShowErrorMessage = true;
+			}
+		}
+		catch (Exception ex)
+		{
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception occurred: AdminLoginPage.LoginClick(): {ex.ToString()}");
+		}
+	}
 }

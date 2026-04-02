@@ -36,14 +36,44 @@ namespace HouseRental.WASB.Services
             }
         }
 
-        public Task<bool> DeleteFeatureCardInformation(int entryID)
+        public async Task<bool> DeleteFeatureCardInformation(int entryID)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"deleteFeatureCardInformation/{entryID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public Task<bool> EditFeatureCardInformation(FeatureCard featureCard)
+        public async Task<bool> EditFeatureCardInformation(FeatureCard featureCard)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("editFeatureCardInformation", featureCard);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<List<FeatureCard>?> GetAllFeatureCardInformation()

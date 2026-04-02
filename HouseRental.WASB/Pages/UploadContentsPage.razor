@@ -26,15 +26,15 @@
 
 						<div class="px-3 mt-1">
 							<label class="fs-6 fw-normal">Image Name:</label>
-							<label class="ms-1 fs-6 fw-bold fst-italic">@featureCard.EntryID</label>
+							<label class="ms-1 fs-6 fw-bold fst-italic">@featureCard.ImageFileName</label>
 						</div>
 
 						<div class="card-body d-flex flex-column">
 
-							<button type="button" @onclick="UploadNewImageFeatureCardClick"
-									class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0 mb-3">
-								Change Image
-							</button>
+							<div class="mb-3">
+								<label class="form-label fw-bold">Change Image</label>
+								<InputFile OnChange="@(e => UploadNewImageFeatureCardClick(e, featureCard.EntryID))" class="form-control" accept=".jpg,.png,.jpeg" />
+							</div>
 
 							<div class="mb-3">
 								<label for="cardTitle @featureCard.EntryID" class="form-label fw-bold">Card Title</label>
@@ -44,7 +44,7 @@
 										  @bind="featureCard.CardTitle"
 										  placeholder="Enter card title"
 										  style="font-size: 0.9rem; resize: none;">
-									  </textarea>
+													  </textarea>
 							</div>
 
 							<div class="mb-3">
@@ -55,13 +55,13 @@
 										  @bind="featureCard.CardDescription"
 										  placeholder="Enter card description"
 										  style="font-size: 0.9rem; resize: none;">
-									  </textarea>
+													  </textarea>
 							</div>
 
-							<button type="button" @onclick="EditFeatureCardClick" class="btn btn-success w-100 py-2 fw-bold rounded-3 border-0 mb-2">
+							<button type="button" @onclick="() => EditFeatureCardClick(featureCard.EntryID)" class="btn btn-success w-100 py-2 fw-bold rounded-3 border-0 mb-2">
 								Edit Card
 							</button>
-							<button type="button" @onclick="DeleteFeatureCardClick" class="btn btn-danger w-100 py-2 fw-bold rounded-3 border-0">
+							<button type="button" @onclick="() => DeleteFeatureCardClick(featureCard.EntryID)" class="btn btn-danger w-100 py-2 fw-bold rounded-3 border-0">
 								Delete Card
 							</button>
 						</div>
@@ -79,11 +79,12 @@
 				</button>
 			</div>
 		</div>
-	</div>	
+	</div>
 </div>
 
 @code {
 	[Inject] private IContentManagementService? contentManagementService { get; set; }
+	[Inject] private IOptions<AppSettings>? AppSettings { get; set; }
 	List<FeatureCard> FeatureCards = new List<FeatureCard>();
 
 	protected override async Task OnInitializedAsync()
@@ -111,11 +112,26 @@
 
 	#region Feature Card Related Operations
 
-	private void EditFeatureCardClick()
+	private async Task EditFeatureCardClick(int EntryId)
 	{
 		try
 		{
-
+			if (contentManagementService != null)
+			{
+				var featureCard = FeatureCards.FirstOrDefault(card => card.EntryID == EntryId);
+				if (featureCard != null)
+				{
+					var result = await contentManagementService.EditFeatureCardInformation(featureCard);
+					if (result)
+					{
+						CustomFunctions.WriteConsoleLog("INFOR", $"UploadContentsPage.EditFeatureCardClick(): result == True");
+					}
+					else
+					{
+						CustomFunctions.WriteConsoleLog("ERROR", $"UploadContentsPage.EditFeatureCardClick(): result == False");
+					}
+				}
+			}
 		}
 		catch (Exception ex)
 		{
@@ -123,30 +139,60 @@
 		}
 	}
 
-	private void DeleteFeatureCardClick()
+	private async Task DeleteFeatureCardClick(int EntryId)
 	{
 		try
 		{
-
+			if (contentManagementService != null)
+			{
+				var result = await contentManagementService.DeleteFeatureCardInformation(EntryId);
+				if (result)
+				{
+					var featureCards = await contentManagementService.GetAllFeatureCardInformation();
+					if (featureCards != null && featureCards.Count > 0)
+					{
+						FeatureCards = featureCards;
+					}
+					CustomFunctions.WriteConsoleLog("INFOR", $"UploadContentsPage.DeleteFeatureCardClick(): result == True");
+				}
+				else
+				{
+					CustomFunctions.WriteConsoleLog("ERROR", $"UploadContentsPage.DeleteFeatureCardClick(): result == False");
+				}
+			}
 		}
 		catch (Exception ex)
 		{
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.EditFeatureCardClick(): {ex.ToString()}");
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.DeleteFeatureCardClick(): {ex.ToString()}");
 		}
 	}
 
-	private void UploadNewImageFeatureCardClick()
+	private async Task UploadNewImageFeatureCardClick(InputFileChangeEventArgs e, int EntryId)
 	{
 		try
 		{
+			var selectedImage = e.File;
+			if (selectedImage != null && AppSettings != null)
+			{
+				var featureCard = FeatureCards.FirstOrDefault(card => card.EntryID == EntryId);
+				if (featureCard != null)
+				{
+					using var stream = selectedImage.OpenReadStream(1024 * 1024 * Convert.ToInt32(AppSettings.Value.MaxImageUploadSizeInMB));
+					using var memoryStream = new MemoryStream();
+					await stream.CopyToAsync(memoryStream);
 
+					featureCard.CardImage = memoryStream.ToArray();
+					featureCard.ImageFileName = selectedImage.Name;
+					featureCard.ImageContentType = selectedImage.ContentType;					
+				}
+			}
 		}
 		catch (Exception ex)
 		{
 			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.UploadNewImageFeatureCardClick(): {ex.ToString()}");
 		}
 	}
-	
+
 	private void AddFeatureCardClick()
 	{
 		try

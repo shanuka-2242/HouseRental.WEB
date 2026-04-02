@@ -1,6 +1,7 @@
 html, body {
     background-color: #E5E7EB;
-    font-family: "PT Serif", serif;
+    /*    font-family: "PT Serif", serif;*/
+    font-family: "Google Sans", serif;
 }
 
 .viewdetails-btn {

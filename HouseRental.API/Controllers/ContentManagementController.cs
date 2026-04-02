@@ -19,24 +19,14 @@ namespace HouseRental.API.Controllers
 
         //POST: api/v1/ContentManagement/addFeatureCardInformation
         [HttpPost("addFeatureCardInformation")]
-        public async Task<ActionResult> AddFeatureCardInformation([FromForm] FeatureCardDTO featureCardDTO)
+        public async Task<ActionResult> AddFeatureCardInformation(FeatureCard featureCard)
         {
             try
             {
-                if (featureCardDTO.CardImage == null || featureCardDTO.CardImage.Length == 0)
+                if (featureCard.CardImage == null || featureCard.CardImage.Length == 0)
                 {
                     return BadRequest("Feature card image cannot be null.");
                 }
-
-                using var memoryStream = new MemoryStream();
-                await featureCardDTO.CardImage.CopyToAsync(memoryStream);
-
-                FeatureCard featureCard = new FeatureCard();
-                featureCard.CardTitle = featureCardDTO.CardTitle;
-                featureCard.CardDescription = featureCardDTO.CardDescription;
-                featureCard.CardImage = memoryStream.ToArray();
-                featureCard.ImageContentType = featureCardDTO.CardImage.ContentType;
-                featureCard.ImageFileName = featureCardDTO.CardImage.FileName;
 
                 var result = await _contentManagementService.AddFeatureCardInformation(featureCard);
                 if (result)
@@ -72,25 +62,14 @@ namespace HouseRental.API.Controllers
 
         //PUT: api/v1/ContentManagement/editFeatureCardInformation
         [HttpPut("editFeatureCardInformation")]
-        public async Task<ActionResult> EditFeatureCardInformation([FromForm] FeatureCardDTO featureCardDTO)
+        public async Task<ActionResult> EditFeatureCardInformation(FeatureCard featureCard)
         {
             try
             {
-                if (featureCardDTO.CardImage == null || featureCardDTO.CardImage.Length == 0)
+                if (featureCard.CardImage == null || featureCard.CardImage.Length == 0)
                 {
                     return BadRequest("CardImage cannot be empty.");
                 }
-
-                using var memoryStream = new MemoryStream();
-                await featureCardDTO.CardImage.CopyToAsync(memoryStream);
-
-                FeatureCard featureCard = new FeatureCard();
-                featureCard.EntryID = featureCardDTO.EntryID;
-                featureCard.CardTitle = featureCardDTO.CardTitle;
-                featureCard.CardDescription = featureCardDTO.CardDescription;
-                featureCard.CardImage = memoryStream.ToArray();
-                featureCard.ImageContentType = featureCardDTO.CardImage.ContentType;
-                featureCard.ImageFileName = featureCardDTO.CardImage.FileName;
 
                 var result = await _contentManagementService.EditFeatureCardInformation(featureCard);
                 if (result)

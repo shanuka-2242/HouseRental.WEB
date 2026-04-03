@@ -184,7 +184,7 @@
 </div>
 
 @* More info message box *@
-@if (IsVisibleMessageBox)
+@if (ShowMoreDeatils)
 {
 	<div class="modal-backdrop fade show"></div>
 
@@ -193,7 +193,7 @@
 			<div class="modal-content border-0">
 
 				<div class="modal-header border-0 pb-0">
-					<button type="button" class="btn-close" @onclick="CloseMessage"></button>
+					<button type="button" class="btn-close" @onclick="CloseMoreDeatils"></button>
 				</div>
 
 				<div class="modal-body p-4">
@@ -237,7 +237,7 @@
 	List<HouseImage> HouseImages = new List<HouseImage>();
 	HouseInformation HouseInformation = new HouseInformation();
 
-	private bool IsVisibleMessageBox { get; set; } = false;
+	private bool ShowMoreDeatils = false;
 
 	private bool IsLoadingFeatureCards = true;
 	private bool IsFeatureCardsExist = false;
@@ -313,11 +313,11 @@
 
 	private void ShowMoreDetails()
 	{
-		IsVisibleMessageBox = true;
+		ShowMoreDeatils = true;
 	}
 
-	private void CloseMessage()
+	private void CloseMoreDeatils()
 	{
-		IsVisibleMessageBox = false;
+		ShowMoreDeatils = false;
 	}
 }

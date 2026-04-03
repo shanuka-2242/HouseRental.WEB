@@ -15,8 +15,6 @@ namespace HouseRental.Shared
         public string Password { get; set; } = string.Empty;
     }
 
-    #region FeatureCard Card Class & DTO
-
     public class FeatureCard
     {
         [Key]
@@ -27,26 +25,6 @@ namespace HouseRental.Shared
         public string ImageContentType { get; set; } = string.Empty;
         public string ImageFileName { get; set; } = string.Empty;
     }
-
-    //public class FeatureCardDTO
-    //{
-    //    public int EntryID { get; set; }
-    //    public string CardTitle { get; set; } = string.Empty;
-    //    public string CardDescription { get; set; } = string.Empty;
-    //    public required IFormFile CardImage { get; set; }
-    //}
-
-    //public class TestEditFeatureCardDTO
-    //{
-    //    public int EntryID { get; set; }
-    //    public string CardTitle { get; set; } = string.Empty;
-    //    public string CardDescription { get; set; } = string.Empty;
-    //    public byte[] CardImage { get; set; } = [];
-    //    public string ImageContentType { get; set; } = string.Empty;
-    //    public string ImageFileName { get; set; } = string.Empty;
-    //}
-
-    #endregion
 
     #region Destination Card Class & DTO
 

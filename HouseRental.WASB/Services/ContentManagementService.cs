@@ -32,7 +32,7 @@ namespace HouseRental.WASB.Services
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 
@@ -52,7 +52,7 @@ namespace HouseRental.WASB.Services
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 
@@ -72,7 +72,7 @@ namespace HouseRental.WASB.Services
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 
@@ -99,10 +99,9 @@ namespace HouseRental.WASB.Services
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllFeatureCardInformation():{ex.ToString()}");
-                return null;
+                throw;
             }
         }
 
@@ -148,10 +147,9 @@ namespace HouseRental.WASB.Services
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllDestinationCardInformation():{ex.ToString()}");
-                return null;
+                throw;
             }
         }
 
@@ -193,10 +191,9 @@ namespace HouseRental.WASB.Services
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Exception occurred at ContentManagementService.GetAllHouseImages():{ex.ToString()}");
-                return null;
+                throw;
             }
         }
 
@@ -237,10 +234,9 @@ namespace HouseRental.WASB.Services
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Exception occurred at ContentManagementService.GetHouseInformation():{ex.ToString()}");
-                return null;
+                throw;
             }
         }
 

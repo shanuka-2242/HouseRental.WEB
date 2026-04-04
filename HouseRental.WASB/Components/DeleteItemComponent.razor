@@ -1,0 +1,71 @@
+﻿<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content border-0">
+
+			<div class="modal-body p-4">
+
+				<h5 class="fw-bold mb-2">Are you sure about deleting the selected item?</h5>
+				<h6 class="text-danger mb-4">This action cannot be undone.</h6>
+
+				<div class="d-flex flex-column">
+					<button type="button" class="btn btn-danger mb-2" @onclick="DeleteItem">Delete</button>
+					<button type="button" class="btn btn-primary" @onclick="CancelDeleteProcess">Cancel</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public int EntryID { get; set; }
+	[Parameter] public string ItemCategory { get; set; } = string.Empty;
+	[Parameter] public EventCallback OnCancelClick { get; set; }
+	[Parameter] public EventCallback OnDeleteCompleted { get; set; }
+	[Inject] private IContentManagementService? contentManagementService { get; set; }
+
+	private async Task CancelDeleteProcess()
+	{
+		await OnCancelClick.InvokeAsync();
+	}
+
+	private async Task DeleteProcessCompleted()
+	{
+		await OnDeleteCompleted.InvokeAsync();
+	}
+
+	private async Task DeleteItem()
+	{
+		try
+		{
+			if (contentManagementService != null)
+			{
+				switch (ItemCategory)
+				{
+					case "HOUSE_FEATURE_CARDS":
+						var result = await contentManagementService.DeleteFeatureCardInformation(EntryID);
+						if (result)
+						{
+							await CancelDeleteProcess();
+							await DeleteProcessCompleted();
+						}
+						else
+						{
+							CustomFunctions.WriteConsoleLog("ERROR", $"DeleteItemComponent.DeleteItem(): Delete 'HOUSE_FEATURE_CARDS' not process sucessfully. result is false.");
+							await CancelDeleteProcess();
+						}
+						break;
+				}
+			}
+			else
+			{
+				CustomFunctions.WriteConsoleLog("ERROR", "DeleteItemComponent.DeleteItem(): contentManagementService is null.");
+			}
+		}
+		catch (Exception ex)
+		{			
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occurred DeleteItemComponent.DeleteItem(): {ex.ToString()}");
+		}
+	}
+}

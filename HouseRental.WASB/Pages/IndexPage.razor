@@ -30,10 +30,7 @@
 
 		@if (IsLoadingFeatureCards)
 		{
-			<div class="d-flex justify-content-center align-items-center gap-3">
-				Fetching information, please wait
-				<div class="spinner-border" role="status"></div>
-			</div>
+			<FetchingInformationComponent />
 		}
 		else
 		{
@@ -87,10 +84,7 @@
 	<div class="row">
 		@if (IsLoadingHouseImages)
 		{
-			<div class="d-flex justify-content-center align-items-center gap-3">
-				Fetching information, please wait
-				<div class="spinner-border" role="status"></div>
-			</div>
+			<FetchingInformationComponent />
 		}
 		else
 		{
@@ -130,10 +124,7 @@
 
 		@if (IsLoadingDestinationCards)
 		{
-			<div class="d-flex justify-content-center align-items-center gap-3">
-				Fetching information, please wait
-				<div class="spinner-border" role="status"></div>
-			</div>
+			<FetchingInformationComponent />
 		}
 		else
 		{

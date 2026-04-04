@@ -1,0 +1,186 @@
+﻿<div class="col-md-3 p-2 d-flex">
+
+	<div class="card shadow-sm h-100 w-100 rounded-3">
+
+		<img src="@CardImageUrl"
+			 class="card-img-top"
+			 style="height: 300px; object-fit: cover;">
+
+		<div class="px-3 mt-1">
+			<label class="fs-6 fw-normal">Image Name:</label>
+			<label class="ms-1 fs-6 fw-bold fst-normal">@CardItem.ImageFileName</label>
+		</div>
+
+		<div class="card-body d-flex flex-column">
+
+			<div class="mb-3">
+				<label class="form-label fw-bold">Change Image</label>
+				<InputFile OnChange="@(e => UploadNewImageEditFeatureCardClick(e, CardItem.EntryID))" class="form-control" accept=".jpg,.png,.jpeg" />
+			</div>
+
+			<div class="mb-3">
+				<label for="cardTitle @CardItem.EntryID" class="form-label fw-bold">Card Title</label>
+				<textarea class="form-control form-control-lg rounded-3"
+						  id="cardTitle @CardItem.EntryID"
+						  rows="2"
+						  @bind="CardItem.CardTitle"
+						  placeholder="Enter card title"
+						  style="font-size: 0.9rem; resize: none;">															  
+					  </textarea>
+			</div>
+
+			<div class="mb-3">
+				<label for="cardDesc @CardItem.EntryID" class="form-label fw-bold">Card Description</label>
+				<textarea class="form-control form-control-lg rounded-3"
+						  id="cardDesc @CardItem.EntryID"
+						  rows="3"
+						  @bind="CardItem.CardDescription"
+						  placeholder="Enter card description"
+						  style="font-size: 0.9rem; resize: none;">															  
+					  </textarea>
+			</div>
+
+			<button type="button" @onclick="() => EditFeatureCardClick(CardItem.EntryID)" class="btn btn-success w-100 py-2 fw-bold rounded-3 border-0 mb-2">
+				Edit Card
+			</button>
+			<button type="button" @onclick="() => DeleteFeatureCardClick(CardItem.EntryID)" class="btn btn-danger w-100 py-2 fw-bold rounded-3 border-0">
+				Delete Card
+			</button>
+			@if (ShowAlert)
+			{
+				<AlertComponent AlertColor="@AlertColor" AlertMessage="@AlertMessage" />				
+			}
+			@if (ShowDeleteMessage)
+			{
+				<DeleteItemComponent OnDeleteCompleted="DeleteProcessCompleted" OnCancelClick="CancelDeleteItemClick" EntryID="DeletingEntryID" ItemCategory="@DeletingItemCategory" />
+			}
+
+		</div>
+	</div>
+
+</div>
+
+@code {
+	[Parameter] public FeatureCard CardItem { get; set; } = new FeatureCard();
+	[Parameter] public EventCallback OnItemChanged { get; set; }
+	[Inject] private IContentManagementService? contentManagementService { get; set; }
+	[Inject] private IOptions<AppSettings>? AppSettings { get; set; }
+	string CardImageUrl = string.Empty;
+	bool ShowAlert = false;
+	string AlertMessage = string.Empty;
+	string AlertColor = string.Empty;
+	bool ShowDeleteMessage = false;
+	int DeletingEntryID;
+	string DeletingItemCategory = string.Empty;
+
+	private async Task FeatureCardItemChanged()
+	{
+		await OnItemChanged.InvokeAsync();
+	}
+
+	private async Task DeleteProcessCompleted()
+	{
+		switch (DeletingItemCategory)
+		{
+			case "HOUSE_FEATURE_CARDS":
+				await FeatureCardItemChanged();
+				break;
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		CardImageUrl = $"data:{CardItem.ImageContentType};base64,{Convert.ToBase64String(CardItem.CardImage)}";
+	}
+
+	private async Task EditFeatureCardClick(int EntryId)
+	{
+		try
+		{
+			if (contentManagementService != null)
+			{
+				if (CardItem.CardImage != null && CardItem.CardImage.Length > 0)
+				{
+					if (!string.IsNullOrWhiteSpace(CardItem.CardTitle) && !string.IsNullOrWhiteSpace(CardItem.CardDescription))
+					{
+						var result = await contentManagementService.EditFeatureCardInformation(CardItem);
+						if (result)
+						{
+							AlertMessage = "Edit request processed sucessfully.";
+							AlertColor = "success";
+							ShowAlert = true;
+							await FeatureCardItemChanged();
+						}
+						else
+						{
+							AlertMessage = "Edit request failed. Please try again.";
+							AlertColor = "danger";
+							ShowAlert = true;
+						}
+					}
+					else
+					{
+						AlertMessage = "Entry fields cannot be empty, Please fill them all.";
+						AlertColor = "danger";
+						ShowAlert = true;
+					}
+				}
+				else
+				{
+					AlertMessage = "Image must be uploaded, Please upload an Image.";
+					AlertColor = "danger";
+					ShowAlert = true;
+				}				
+			}
+			else
+			{
+				CustomFunctions.WriteConsoleLog("ERROR", "HouseFeatureFormComponent.EditFeatureCardClick(): contentManagementService is null.");
+			}
+		}
+		catch (Exception ex)
+		{
+			AlertMessage = "Exception occurred, please check console logs and contact the developer.";
+			AlertColor = "danger";
+			ShowAlert = true;
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured HouseFeatureFormComponent.EditFeatureCardClick(): {ex.ToString()}");
+		}
+	}
+
+	private void CancelDeleteItemClick()
+	{
+		ShowDeleteMessage = false;
+	}
+
+	private void DeleteFeatureCardClick(int EntryId)
+	{
+		DeletingEntryID = EntryId;
+		DeletingItemCategory = "HOUSE_FEATURE_CARDS";
+		ShowDeleteMessage = true;
+	}
+
+	private async Task UploadNewImageEditFeatureCardClick(InputFileChangeEventArgs e, int EntryId)
+	{
+		try
+		{
+			var selectedImage = e.File;
+			if (selectedImage != null && AppSettings != null)
+			{
+				using var stream = selectedImage.OpenReadStream(1024 * 1024 * Convert.ToInt32(AppSettings.Value.MaxImageUploadSizeInMB));
+				using var memoryStream = new MemoryStream();
+				await stream.CopyToAsync(memoryStream);
+
+				CardItem.CardImage = memoryStream.ToArray();
+				CardItem.ImageFileName = selectedImage.Name;
+				CardItem.ImageContentType = selectedImage.ContentType;
+				CardImageUrl = $"data:{CardItem.ImageContentType};base64,{Convert.ToBase64String(CardItem.CardImage)}";
+			}
+		}
+		catch (Exception ex)
+		{
+			AlertMessage = "Exception occurred, please check console logs and contact the developer.";
+			AlertColor = "danger";
+			ShowAlert = true;
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occurred HouseFeatureFormComponent.UploadNewImageEditFeatureCardClick(): {ex.ToString()}");
+		}
+	}
+}

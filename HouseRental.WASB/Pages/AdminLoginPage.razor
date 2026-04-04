@@ -30,9 +30,7 @@
 
 				@if (ShowErrorMessage)
 				{
-					<div class="alert alert-danger mt-3 p-2 small border-0">
-						@ErrorMessage
-					</div>
+					<AlertComponent AlertColor="danger" AlertMessage="@ErrorMessage" />					
 				}
 			</EditForm>
 		</div>
@@ -62,7 +60,7 @@
 			}
 			else
 			{
-				CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.OnInitializedAsync(): NavigationManager == null OR AuthenticationStateProvider == null.");
+				CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.OnInitializedAsync(): NavigationManager is null OR AuthenticationStateProvider is null.");
 			}
 		}
 		catch (Exception ex)
@@ -74,7 +72,7 @@
 	// admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
 	// Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
 
-	private async void LoginClick()
+	private async Task LoginClick()
 	{
 		try
 		{
@@ -94,7 +92,7 @@
 					}
 					else
 					{
-						CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): JSRuntime == null OR NavigationManager == null OR AuthenticationStateProvider == null.");
+						CustomFunctions.WriteConsoleLog("ERROR", "AdminLoginPage.LoginClick(): JSRuntime is null OR NavigationManager is null OR AuthenticationStateProvider is null.");
 					}
 				}
 				else

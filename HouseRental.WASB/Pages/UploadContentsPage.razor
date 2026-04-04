@@ -14,11 +14,11 @@
 		{
 			foreach (var featureCard in FeatureCards)
 			{
-				<FeatureCardComponent CardItemList="FeatureCards" CardItem="featureCard" />
+				<HouseFeatureFormComponent OnItemChanged="HouseFeatureItemChanged" CardItem="featureCard" />
 			}
 		}
 
-		<div class="col-md-4 p-2">
+		<div class="col-md-3 p-2">
 			<div class="d-flex align-items-center justify-content-center bg-light rounded-3 p-4 border-2 border-secondary h-100 shadow-sm" style="border: dashed;">
 				<button type="button" @onclick="ShowFeatureCardClick" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2">
 					<i class="bi bi-plus-circle-dotted fs-5"></i>
@@ -29,98 +29,23 @@
 	</div>
 </div>
 
-@* Add house feature card form *@
-@if (ShowAddHouseFeatureCardForm)
+@*Add House Feature Card Form*@
+@if (ShowAddHouseFeatureForm)
 {
-	<div class="modal-backdrop fade show"></div>
-
-	<div class="modal fade show d-block" tabindex="-1">
-		<div class="modal-dialog modal-dialog-scrollable">
-			<div class="modal-content border-0">
-
-				<div class="modal-header border-0 mb-3 pb-0">
-					<button type="button" class="btn-close" @onclick="CloseFeatureCardForm"></button>
-				</div>
-
-				<div class="modal-body p-3">
-
-					<h3 class="fw-bold text-center">Add A House Feature</h3>
-
-					<hr class="text-muted opacity-25">
-
-					<div class="card h-100 w-100">
-
-						<img src="/images/home-img-1.jpg"
-							 class="card-img-top"
-							 style="height: 300px; object-fit: cover;">
-
-						<div class="card-body d-flex flex-column">
-
-							<div class="mb-3">
-								<label class="form-label fw-bold">Add Image</label>
-								<InputFile OnChange="@UploadNewImageAddFeatureCardClick" class="form-control" accept=".jpg,.png,.jpeg" />
-							</div>
-
-							<div class="mb-3">
-								<label for="cardTitle" class="form-label fw-bold">Card Title</label>
-								<textarea class="form-control form-control-lg rounded-3"
-										  id="cardTitle"
-										  rows="2"
-										  @bind="NewFeatureCard.CardTitle"
-										  placeholder="Enter card title"
-										  style="font-size: 0.9rem; resize: none;">
-															  </textarea>
-							</div>
-
-							<div class="mb-3">
-								<label for="cardDesc" class="form-label fw-bold">Card Description</label>
-								<textarea class="form-control form-control-lg rounded-3"
-										  id="cardDesc"
-										  rows="3"
-										  @bind="NewFeatureCard.CardDescription"
-										  placeholder="Enter card description"
-										  style="font-size: 0.9rem; resize: none;">
-															  </textarea>
-							</div>
-
-							<button type="button" @onclick="AddFeatureCardClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
-								Add Item
-							</button>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-		</div>
-	</div>
+	<AddHouseFeatureFormComponent OnClose="AddFeatureCardOnClose" />
 }
 
 @code {
 	[Inject] private IContentManagementService? contentManagementService { get; set; }
-	[Inject] private IOptions<AppSettings>? AppSettings { get; set; }
 	List<FeatureCard> FeatureCards = new List<FeatureCard>();
-
-	FeatureCard NewFeatureCard = new FeatureCard();
-
-	bool ShowAddHouseFeatureCardForm = false;
+	bool ShowAddHouseFeatureForm = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
-			if (contentManagementService != null)
-			{
-				var featureCards = await contentManagementService.GetAllFeatureCardInformation();
-				if (featureCards != null && featureCards.Count > 0)
-				{
-					FeatureCards = featureCards;
-				}
-			}
-			else
-			{
-				CustomFunctions.WriteConsoleLog("ERROR", "UploadContentsPage.OnInitializedAsync(): contentManagementService is null.");
-			}
+			await FetchDefinedItems("HOUSE_FEATURE_CARDS");
+
 		}
 		catch (Exception ex)
 		{
@@ -128,69 +53,41 @@
 		}
 	}
 
-	#region Manage Feature Card Related Functions
-
-	private void ShowFeatureCardClick()
+	private async Task FetchDefinedItems(string itemName)
 	{
-		ShowAddHouseFeatureCardForm = true;
-	}
-
-	private void CloseFeatureCardForm()
-	{
-		ShowAddHouseFeatureCardForm = false;
-	}
-
-	private async Task UploadNewImageAddFeatureCardClick(InputFileChangeEventArgs e)
-	{
-		try
+		if (contentManagementService != null)
 		{
-			var selectedImage = e.File;
-			if (selectedImage != null && AppSettings != null)
+			switch (itemName)
 			{
-				using var stream = selectedImage.OpenReadStream(1024 * 1024 * Convert.ToInt32(AppSettings.Value.MaxImageUploadSizeInMB));
-				using var memoryStream = new MemoryStream();
-				await stream.CopyToAsync(memoryStream);
-
-				NewFeatureCard.CardImage = memoryStream.ToArray();
-				NewFeatureCard.ImageFileName = selectedImage.Name;
-				NewFeatureCard.ImageContentType = selectedImage.ContentType;
-			}
-		}
-		catch (Exception ex)
-		{
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.UploadNewImageAddFeatureCardClick(): {ex.ToString()}");
-		}
-	}
-
-	private async Task AddFeatureCardClick()
-	{
-		try
-		{
-			if (contentManagementService != null)
-			{
-				var result = await contentManagementService.AddFeatureCardInformation(NewFeatureCard);
-				if (result)
-				{
-					ShowAddHouseFeatureCardForm = false;
+				case "HOUSE_FEATURE_CARDS":
 					FeatureCards.Clear();
 					var featureCards = await contentManagementService.GetAllFeatureCardInformation();
 					if (featureCards != null && featureCards.Count > 0)
 					{
 						FeatureCards = featureCards;
 					}
-					CustomFunctions.WriteConsoleLog("INFOR", $"UploadContentsPage.AddFeatureCardClick(): result == True");
-				}
-				else
-				{
-					CustomFunctions.WriteConsoleLog("ERROR", $"UploadContentsPage.AddFeatureCardClick(): result == False");
-				}
+					break;
 			}
 		}
-		catch (Exception ex)
+		else
 		{
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.AddFeatureCardClick(): {ex.ToString()}");
-		}
+			CustomFunctions.WriteConsoleLog("ERROR", "UploadContentsPage.GetDefinedItems(): contentManagementService is null.");
+		}		
 	}
 
-	#endregion
+	private void ShowFeatureCardClick()
+	{
+		ShowAddHouseFeatureForm = true;
+	}
+
+	private async Task AddFeatureCardOnClose()
+	{
+		ShowAddHouseFeatureForm = false;
+		await FetchDefinedItems("HOUSE_FEATURE_CARDS");
+	}
+
+	private async Task HouseFeatureItemChanged()
+	{		
+		await FetchDefinedItems("HOUSE_FEATURE_CARDS");
+	}
 }

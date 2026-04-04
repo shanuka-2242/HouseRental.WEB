@@ -1,0 +1,98 @@
+﻿<div class="col-md-3 p-2 d-flex">
+
+	<div class="card shadow-sm h-100 w-100 rounded-3">
+
+		<img src="@CardImageUrl"
+			 class="card-img-top"
+			 style="height: 275px; object-fit: cover;">
+
+		<div class="px-3 mt-1">
+			<label class="form-label fw-bold me-1">Image Name:</label>
+			<label class="form-label text-muted">@CardItem.ImageFileName</label>
+		</div>
+
+		<div class="card-body d-flex flex-column">
+
+			<div class="d-flex flex-column mb-2">
+				<label class="form-label fw-bold">Card Title</label>
+				<label class="form-label text-muted">@CardItem.CardTitle</label>
+			</div>
+
+			<div class="d-flex flex-column mb-2">
+				<label class="form-label fw-bold">Card Description</label>
+				<label class="form-label text-muted">@CardItem.CardDescription</label>
+			</div>
+
+			<button type="button" @onclick="EditFeatureCardClick" class="btn btn-secondary w-100 py-2 fw-bold rounded-3 border-0 mb-2">
+				Edit Item
+			</button>
+
+			<button type="button" @onclick="() => DeleteFeatureCardClick(CardItem.EntryID)" class="btn btn-danger w-100 py-2 fw-bold rounded-3 border-0">
+				Delete Item
+			</button>			
+
+			@if (ShowDeleteMessage)
+			{
+				<DeleteItemComponent OnDeleteCompleted="DeleteProcessCompleted" OnCancelClick="CancelDeleteItemClick" EntryID="DeletingEntryID" ItemCategory="@DeletingItemCategory" />
+			}
+
+			@if (ShowEditForm)
+			{
+				<EditHouseFeatureFormComponent ExistingCardItem="CardItem" OnClose="CloseEditFormClicked" />
+			}
+
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public FeatureCard CardItem { get; set; } = new FeatureCard();
+	[Parameter] public EventCallback OnItemChanged { get; set; }
+	string CardImageUrl = string.Empty;	
+	bool ShowDeleteMessage = false;
+	bool ShowEditForm = false;
+	int DeletingEntryID;
+	string DeletingItemCategory = string.Empty;
+
+	private async Task FeatureCardItemChanged()
+	{
+		await OnItemChanged.InvokeAsync();
+	}
+
+	private async Task DeleteProcessCompleted()
+	{
+		switch (DeletingItemCategory)
+		{
+			case "HOUSE_FEATURE_CARDS":
+				await FeatureCardItemChanged();
+				break;
+		}
+	}
+
+	private async Task CloseEditFormClicked()
+	{
+		await FeatureCardItemChanged();
+	}
+
+	protected override void OnParametersSet()
+	{
+		CardImageUrl = $"data:{CardItem.ImageContentType};base64,{Convert.ToBase64String(CardItem.CardImage)}";
+	}
+
+	private void EditFeatureCardClick()
+	{
+		ShowEditForm = true;		
+	}
+
+	private void CancelDeleteItemClick()
+	{
+		ShowDeleteMessage = false;
+	}
+
+	private void DeleteFeatureCardClick(int EntryId)
+	{
+		DeletingEntryID = EntryId;
+		DeletingItemCategory = "HOUSE_FEATURE_CARDS";
+		ShowDeleteMessage = true;
+	}
+}

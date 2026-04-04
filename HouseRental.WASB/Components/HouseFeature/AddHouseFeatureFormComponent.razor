@@ -10,7 +10,7 @@
 
 			<div class="modal-body p-3">
 
-				<h3 class="fw-bold text-center">Add A House Feature</h3>
+				<h3 class="fw-bold text-center">Add House Feature</h3>
 
 				<hr class="text-muted opacity-25">
 
@@ -24,7 +24,7 @@
 
 						<div class="mb-3">
 							<label class="form-label fw-bold">Add Image</label>
-							<InputFile OnChange="@UploadNewImageAddFeatureCardClick" class="form-control" accept=".jpg,.png,.jpeg" />
+							<InputFile OnChange="@UploadNewImage" class="form-control" accept=".jpg,.png,.jpeg" />
 						</div>
 
 						<div class="mb-3">
@@ -52,7 +52,7 @@
 						<button type="button" @onclick="AddFeatureCardClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
 							Add Item
 						</button>
-						@if (IsShowAlert)
+						@if (ShowAlert)
 						{
 							<AlertComponent AlertColor="@AlertColor" AlertMessage="@AlertMessage" />
 						}
@@ -64,12 +64,13 @@
 
 	</div>
 </div>
+
 @code {
 	[Parameter] public EventCallback OnClose { get; set; }
 	[Inject] private IContentManagementService? contentManagementService { get; set; }
 	[Inject] private IOptions<AppSettings>? AppSettings { get; set; }
 	FeatureCard NewFeatureCard = new FeatureCard();
-	bool IsShowAlert = false;
+	bool ShowAlert = false;
 	string AlertMessage = string.Empty;
 	string AlertColor = string.Empty;
 	string CardImageUrl = "/images/upload-image.png";
@@ -79,7 +80,7 @@
 		await OnClose.InvokeAsync();
 	}
 
-	private async Task UploadNewImageAddFeatureCardClick(InputFileChangeEventArgs e)
+	private async Task UploadNewImage(InputFileChangeEventArgs e)
 	{
 		try
 		{
@@ -98,7 +99,7 @@
 		}
 		catch (Exception ex)
 		{
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured AddHouseFeatureCardComponent.UploadNewImageAddFeatureCardClick(): {ex.ToString()}");
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured AddHouseFeatureCardComponent.UploadNewImage(): {ex.ToString()}");
 		}
 	}
 
@@ -108,18 +109,36 @@
 		{
 			if (contentManagementService != null)
 			{
-				var result = await contentManagementService.AddFeatureCardInformation(NewFeatureCard);
-				if (result)
+				if (NewFeatureCard.CardImage != null && NewFeatureCard.CardImage.Length > 0)
 				{
-					AlertMessage = "Add request processed sucessfully.";
-					AlertColor = "success";
-					IsShowAlert = true;
+					if (!string.IsNullOrWhiteSpace(NewFeatureCard.CardTitle) && !string.IsNullOrWhiteSpace(NewFeatureCard.CardDescription))
+					{
+						var result = await contentManagementService.AddFeatureCardInformation(NewFeatureCard);
+						if (result)
+						{
+							AlertMessage = "Add request processed sucessfully.";
+							AlertColor = "success";
+							ShowAlert = true;
+						}
+						else
+						{
+							AlertMessage = "Add request failed. Please try again.";
+							AlertColor = "danger";
+							ShowAlert = true;
+						}
+					}
+					else
+					{
+						AlertMessage = "Entry fields cannot be empty, Please fill them all.";
+						AlertColor = "danger";
+						ShowAlert = true;
+					}
 				}
 				else
 				{
-					AlertMessage = "Add request failed. Please try again.";
+					AlertMessage = "Image must be uploaded, Please upload an Image.";
 					AlertColor = "danger";
-					IsShowAlert = true;
+					ShowAlert = true;
 				}
 			}
 			else
@@ -131,7 +150,7 @@
 		{
 			AlertMessage = "Exception occurred, please check console logs and contact the developer.";
 			AlertColor = "danger";
-			IsShowAlert = true;
+			ShowAlert = true;
 			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured AddHouseFeatureCardComponent.AddFeatureCardClick(): {ex.ToString()}");
 		}
 	}

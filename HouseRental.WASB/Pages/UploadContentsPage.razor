@@ -5,7 +5,7 @@
 
 <div class="container-fluid p-4">
 
-	<h1 class="display-6 fw-bold mt-3 mb-4 text-center">
+	<h1 class="display-6 fw-bold mt-2 mb-4 text-center">
 		Manage House Featues
 	</h1>
 
@@ -13,7 +13,7 @@
 		@if (IsLoadingFeatureCards)
 		{
 			<div class="col-md-3">
-				<FetchingInformationComponent />
+				<FetchingInformationLoading />
 			</div>
 		}
 		else
@@ -22,14 +22,14 @@
 			{
 				foreach (var featureCard in FeatureCards)
 				{
-					<HouseFeatureFormComponent OnItemChanged="HouseFeatureItemChanged" CardItem="featureCard" />
+					<ManageHouseFeatureCard OnHouseFeatureItemChanged="HouseFeatureItemChanged" CardItem="featureCard" />
 				}
 			}
 		}		
 
 		<div class="col-md-3 p-2">
 			<div class="d-flex align-items-center justify-content-center bg-light rounded-3 p-4 border-1 border-secondary h-100 shadow-sm" style="border: dashed;">
-				<button type="button" @onclick="ShowAddFeatureCardClick" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2">
+				<button type="button" @onclick="ShowAddFeatureFormClick" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2">
 					<i class="bi bi-plus-circle-dotted fs-5"></i>
 					<span>Add New Item</span>
 				</button>
@@ -41,7 +41,7 @@
 @*Add House Feature Card Form*@
 @if (ShowAddHouseFeatureForm)
 {
-	<AddHouseFeatureFormComponent OnClose="AddFeatureCardOnClose" />
+	<AddHouseFeatureForm OnFormClose="AddFeatureFormOnClose" />
 }
 
 @code {
@@ -54,8 +54,7 @@
 	{
 		try
 		{
-			await FetchDefinedItems("HOUSE_FEATURE_CARDS");
-
+			await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
 		}
 		catch (Exception ex)
 		{
@@ -63,46 +62,49 @@
 		}
 	}
 
-	private async Task FetchDefinedItems(string itemName)
+	private async Task FatchDefinedItemsFromDataBase(string itemCategoryName)
 	{
-		if (contentManagementService != null)
+		try
 		{
-			switch (itemName)
+			if (contentManagementService != null)
 			{
-				case "HOUSE_FEATURE_CARDS":
-					FeatureCards.Clear();
-					var featureCards = await contentManagementService.GetAllFeatureCardInformation();
-					if (featureCards != null && featureCards.Count > 0)
-					{
-						FeatureCards = featureCards;
+				switch (itemCategoryName)
+				{
+					case "HOUSE_FEATURE_CARDS":
+						FeatureCards.Clear();
+						var featureCards = await contentManagementService.GetAllFeatureCardInformation();
+						if (featureCards != null && featureCards.Count > 0)
+						{
+							FeatureCards = featureCards;
+						}
 						IsLoadingFeatureCards = false;
-					}
-					else
-					{
-						IsLoadingFeatureCards = false;
-					}
-					break;
+						break;
+				}
+			}
+			else
+			{
+				CustomFunctions.WriteConsoleLog("ERROR", "UploadContentsPage.FatchDefinedItemsFromDataBase(): contentManagementService is null.");
 			}
 		}
-		else
+		catch (Exception ex)
 		{
-			CustomFunctions.WriteConsoleLog("ERROR", "UploadContentsPage.GetDefinedItems(): contentManagementService is null.");
-		}		
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured UploadContentsPage.FatchDefinedItemsFromDataBase(): {ex.ToString()}");
+		}			
 	}
 
-	private void ShowAddFeatureCardClick()
+	private void ShowAddFeatureFormClick()
 	{
 		ShowAddHouseFeatureForm = true;
 	}
 
-	private async Task AddFeatureCardOnClose()
+	private async Task AddFeatureFormOnClose()
 	{
 		ShowAddHouseFeatureForm = false;
-		await FetchDefinedItems("HOUSE_FEATURE_CARDS");
+		await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
 	}
 
 	private async Task HouseFeatureItemChanged()
 	{		
-		await FetchDefinedItems("HOUSE_FEATURE_CARDS");
+		await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
 	}
 }

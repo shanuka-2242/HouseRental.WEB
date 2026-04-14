@@ -6,7 +6,6 @@
 	<div class="card shadow-sm border-0 p-4 rounded-3" style="width: 100%; max-width: 400px;">
 		<div class="card-body">
 			<h3 class="text-center fw-bold mb-4">Admin Login</h3>
-
 			<EditForm Model="@adminUser">
 				<div class="mb-3">
 					<label for="email" class="form-label fw-bold">Email address</label>
@@ -15,7 +14,6 @@
 						   @bind-value="adminUser.Email" @bind-value:event="oninput"
 						   style="font-size: 0.9rem;">
 				</div>
-
 				<div class="mb-3">
 					<label for="password" class="form-label fw-bold">Password</label>
 					<input type="password" class="form-control form-control-lg px-3 rounded-3"
@@ -23,11 +21,9 @@
 						   @bind-value="adminUser.Password" @bind-value:event="oninput"
 						   style="font-size: 0.9rem;">
 				</div>
-
 				<button type="submit" @onclick="LoginClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
 					Log In
 				</button>
-
 				@if (ShowErrorMessage)
 				{
 					<FormAlert AlertColor="danger" AlertMessage="@ErrorMessage" />					
@@ -71,7 +67,6 @@
 
 	// admin@gmail.com - 7932B2E116B076A54F452848EAABD5857F61BD957FE8A218FAF216F24C9885BB
 	// Admin@4321      - 7CCC547ECB954714B2495951D0108E4E99DDA62685C6C6551F43137B731F486C
-
 	private async Task LoginClick()
 	{
 		try

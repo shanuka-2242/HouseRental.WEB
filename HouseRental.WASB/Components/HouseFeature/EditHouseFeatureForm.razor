@@ -1,32 +1,22 @@
 ﻿<div class="modal-backdrop fade show"></div>
-
 <div class="modal fade show d-block" tabindex="-1">
 	<div class="modal-dialog modal-dialog-scrollable">
 		<div class="modal-content border-0">
-
 			<div class="modal-header border-0 mb-3 pb-0">
 				<button type="button" class="btn-close" @onclick="CloseEditFeatureForm"></button>
 			</div>
-
 			<div class="modal-body p-3">
-
 				<h3 class="fw-bold text-center">Edit House Feature</h3>
-
 				<hr class="text-muted opacity-25">
-
 				<div class="card h-100 w-100">
-
 					<img src="@CardImageUrl"
 						 class="card-img-top"
 						 style="height: 300px; object-fit: cover;">
-
 					<div class="card-body d-flex flex-column">
-
 						<div class="mb-3">
 							<label class="form-label fw-bold">Select Image</label>
 							<InputFile OnChange="@UploadNewImage" class="form-control" accept=".jpg,.png,.jpeg" />
 						</div>
-
 						<div class="mb-3">
 							<label for="cardTitle" class="form-label fw-bold">Card Title</label>
 							<textarea class="form-control form-control-lg rounded-3"
@@ -37,7 +27,6 @@
 									  style="font-size: 0.9rem; resize: none;">
 															  </textarea>
 						</div>
-
 						<div class="mb-3">
 							<label for="cardDesc" class="form-label fw-bold">Card Description</label>
 							<textarea class="form-control form-control-lg rounded-3"
@@ -48,7 +37,6 @@
 									  style="font-size: 0.9rem; resize: none;">
 															  </textarea>
 						</div>
-
 						<button type="button" @onclick="EditSelectedHouseFeatureClick" class="btn btn-primary w-100 py-2 fw-bold rounded-3 border-0">
 							Edit Item
 						</button>
@@ -58,15 +46,15 @@
 						}
 					</div>
 				</div>
-
 			</div>
 		</div>
-
 	</div>
 </div>
 
 @code {
+	[EditorRequired]
 	[Parameter] public FeatureCard ExistingCardItem { get; set; } = new();
+	[EditorRequired]
 	[Parameter] public EventCallback OnFormClose { get; set; }
 	bool ShowAlert = false;
 	string CardImageUrl = string.Empty;
@@ -98,13 +86,13 @@
 						var result = await contentManagementService.EditFeatureCardInformation(ExistingCardItem);
 						if (result)
 						{
-							AlertMessage = "Edit request processed sucessfully.";
+							AlertMessage = "Item edited sucessfully.";
 							AlertColor = "success";
 							ShowAlert = true;
 						}
 						else
 						{
-							AlertMessage = "Edit request failed. Please try again.";
+							AlertMessage = "Item editing process failed. Please try again.";
 							AlertColor = "danger";
 							ShowAlert = true;
 						}
@@ -118,14 +106,14 @@
 				}
 				else
 				{
-					AlertMessage = "Image must be uploaded, Please upload an Image.";
+					AlertMessage = "A image must be uploaded, Please upload an Image.";
 					AlertColor = "danger";
 					ShowAlert = true;
 				}
 			}
 			else
 			{
-				CustomFunctions.WriteConsoleLog("ERROR", "EditHouseFeatureFormComponent.EditFeatureCardClick(): contentManagementService is null.");
+				CustomFunctions.WriteConsoleLog("ERROR", "EditHouseFeatureForm.EditSelectedHouseFeatureClick(): contentManagementService is null.");
 			}
 		}
 		catch (Exception ex)
@@ -133,7 +121,7 @@
 			AlertMessage = "Exception occurred, please check console logs and contact the developer.";
 			AlertColor = "danger";
 			ShowAlert = true;
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured EditHouseFeatureFormComponent.EditFeatureCardClick(): {ex.ToString()}");
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured EditHouseFeatureForm.EditSelectedHouseFeatureClick(): {ex.ToString()}");
 		}
 	}
 
@@ -156,7 +144,7 @@
 		}
 		catch (Exception ex)
 		{
-			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured EditHouseFeatureFormComponent.UploadNewImage(): {ex.ToString()}");
+			CustomFunctions.WriteConsoleLog("ERROR", $"Exception Occured EditHouseFeatureForm.UploadNewImage(): {ex.ToString()}");
 		}
 	}
 }

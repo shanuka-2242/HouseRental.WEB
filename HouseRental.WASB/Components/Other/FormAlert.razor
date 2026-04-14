@@ -1,8 +1,10 @@
-﻿<div class="alert alert-@AlertColor mt-3 p-2 small border-0">
+﻿<div class="alert alert-@AlertColor mt-3 p-2 small border-1">
 	@AlertMessage
 </div>
 
 @code {
+	[EditorRequired]
 	[Parameter] public string AlertColor { get; set; } = "danger";
+	[EditorRequired]
 	[Parameter] public string AlertMessage { get; set; } = string.Empty;
 }

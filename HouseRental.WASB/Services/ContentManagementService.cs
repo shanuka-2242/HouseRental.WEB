@@ -201,14 +201,24 @@ namespace HouseRental.WASB.Services
 
         #region Manage House Information Services
 
-        public async Task<bool> AddHouseInformation(HouseInformation houseInformation)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> EditHouseInformation(HouseInformation houseInformation)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("editHouseInformation", houseInformation);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<HouseInformation?> GetHouseInformation()

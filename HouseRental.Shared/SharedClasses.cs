@@ -9,6 +9,12 @@ namespace HouseRental.Shared
         public string MaxImageUploadSizeInMB { get; set; } = string.Empty;
     }
 
+    public enum ItemCategoryName
+    {
+        HOUSE_FEATURE_CARDS,
+        HOUSE_INFORMATION
+    }
+
     public class AdminUser
     {
         public string Email { get; set; } = string.Empty;

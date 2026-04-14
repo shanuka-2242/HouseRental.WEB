@@ -4,11 +4,31 @@
 <PageTitle>Upload Contents</PageTitle>
 
 <div class="container-fluid p-4">
-
-	<h1 class="display-6 fw-bold mt-2 mb-4 text-center">
+	@* Manage House Information *@
+	<h1 class="display-6 fw-bold mt-4 mb-4 text-center">
+		Manage House Information
+	</h1>
+	<div class="row text-start">
+		@if (IsLoadingHouseInformation)
+		{
+			<div class="col-md-3">
+				<FetchingInformationLoading />
+			</div>
+		}
+		else
+		{
+			if (HouseInformation != null)
+			{
+				<div class="col-md-3">
+					<ManageHouseInformationForm HouseInformation="HouseInformation" />
+				</div>
+			}
+		}
+	</div>
+	@* Manage House Featues *@
+	<h1 class="display-6 fw-bold mt-4 mb-4 text-center">
 		Manage House Featues
 	</h1>
-
 	<div class="row text-start">
 		@if (IsLoadingFeatureCards)
 		{
@@ -25,11 +45,10 @@
 					<ManageHouseFeatureCard OnHouseFeatureItemChanged="HouseFeatureItemChanged" CardItem="featureCard" />
 				}
 			}
-		}		
-
+		}	
 		<div class="col-md-3 p-2">
 			<div class="d-flex align-items-center justify-content-center bg-light rounded-3 p-4 border-1 border-secondary h-100 shadow-sm" style="border: dashed;">
-				<button type="button" @onclick="ShowAddFeatureFormClick" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2">
+				<button type="button" @onclick="ShowAddFeatureFormClick" class="btn btn-success d-inline-flex align-items-center gap-2 px-3 py-2">
 					<i class="bi bi-plus-circle-dotted fs-5"></i>
 					<span>Add New Item</span>
 				</button>
@@ -47,14 +66,17 @@
 @code {
 	[Inject] private IContentManagementService? contentManagementService { get; set; }
 	List<FeatureCard> FeatureCards = new List<FeatureCard>();
+	HouseInformation HouseInformation = new HouseInformation();
 	bool ShowAddHouseFeatureForm = false;
 	private bool IsLoadingFeatureCards = true;
+	private bool IsLoadingHouseInformation = true;
 
 	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
-			await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
+			await FatchDefinedItemsFromDataBase(ItemCategoryName.HOUSE_FEATURE_CARDS);
+			await FatchDefinedItemsFromDataBase(ItemCategoryName.HOUSE_INFORMATION);
 		}
 		catch (Exception ex)
 		{
@@ -62,7 +84,7 @@
 		}
 	}
 
-	private async Task FatchDefinedItemsFromDataBase(string itemCategoryName)
+	private async Task FatchDefinedItemsFromDataBase(ItemCategoryName itemCategoryName)
 	{
 		try
 		{
@@ -70,7 +92,7 @@
 			{
 				switch (itemCategoryName)
 				{
-					case "HOUSE_FEATURE_CARDS":
+					case ItemCategoryName.HOUSE_FEATURE_CARDS:
 						FeatureCards.Clear();
 						var featureCards = await contentManagementService.GetAllFeatureCardInformation();
 						if (featureCards != null && featureCards.Count > 0)
@@ -78,6 +100,14 @@
 							FeatureCards = featureCards;
 						}
 						IsLoadingFeatureCards = false;
+						break;
+					case ItemCategoryName.HOUSE_INFORMATION:
+						var houseInformation = await contentManagementService.GetHouseInformation();
+						if (houseInformation != null)
+						{
+							HouseInformation = houseInformation;
+						}
+						IsLoadingHouseInformation = false;
 						break;
 				}
 			}
@@ -100,11 +130,11 @@
 	private async Task AddFeatureFormOnClose()
 	{
 		ShowAddHouseFeatureForm = false;
-		await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
+		await FatchDefinedItemsFromDataBase(ItemCategoryName.HOUSE_FEATURE_CARDS);
 	}
 
 	private async Task HouseFeatureItemChanged()
 	{		
-		await FatchDefinedItemsFromDataBase("HOUSE_FEATURE_CARDS");
+		await FatchDefinedItemsFromDataBase(ItemCategoryName.HOUSE_FEATURE_CARDS);
 	}
 }

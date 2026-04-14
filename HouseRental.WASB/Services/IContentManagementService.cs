@@ -33,7 +33,6 @@ namespace HouseRental.WASB.Services
 
         #region Manage House Information Functions
 
-        Task<bool> AddHouseInformation(HouseInformation houseInformation);
         Task<bool> EditHouseInformation(HouseInformation houseInformation);
         Task<HouseInformation?> GetHouseInformation();
 
